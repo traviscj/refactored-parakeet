@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group 'io.tcj'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation("com.squareup.misk:misk:0.22.0")
+    implementation("com.squareup.misk:misk-actions:0.22.0")
+    implementation("com.squareup.misk:misk-admin:0.22.0")
+    implementation("com.squareup.misk:misk-core:0.22.0")
+    implementation("com.squareup.misk:misk-inject:0.22.0")
+    implementation("com.squareup.misk:wisp-resource-loader:0.22.0")
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+test {
+    useJUnitPlatform()
+}
