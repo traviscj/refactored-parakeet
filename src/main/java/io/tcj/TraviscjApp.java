@@ -18,28 +18,33 @@ import misk.web.dashboard.ConfigDashboardTabModule;
 import wisp.deployment.Deployment;
 
 public class TraviscjApp {
-    public static void main(String[] args) {
-        Deployment deployment = new Deployment("development", false, false, false, true);
-        TraviscjConfig config = MiskConfig.load(TraviscjConfig.class, "traviscj",
-                deployment, ImmutableList.of(), ResourceLoader.Companion.getSYSTEM());
+  public static void main(String[] args) {
+    Deployment deployment = new Deployment("development", false, false, false, true);
+    TraviscjConfig config =
+        MiskConfig.load(
+            TraviscjConfig.class,
+            "traviscj",
+            deployment,
+            ImmutableList.of(),
+            ResourceLoader.Companion.getSYSTEM());
 
-        new MiskApplication(
-                new MiskRealServiceModule(),
-                new MiskWebModule(config.web),
-                new TraviscjAppModule(),
-                new ConfigModule<>(TraviscjConfig.class, "traviscj", config),
-                new DeploymentModule(deployment),
-                new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        Multibinder.newSetBinder(binder(), MiskCallerAuthenticator.class).addBinding()
-                                .toInstance(() -> new MiskCaller(null, "traviscj", ImmutableSet.of(
-                                        "admin_access"
-                                )));
-                    }
-                },
-                new AdminDashboardModule(false),
-                new ConfigDashboardTabModule(false)
-        ).run(args);
-    }
+    new MiskApplication(
+            new MiskRealServiceModule(),
+            new MiskWebModule(config.web),
+            new TraviscjAppModule(),
+            new ConfigModule<>(TraviscjConfig.class, "traviscj", config),
+            new DeploymentModule(deployment),
+            new AbstractModule() {
+              @Override
+              protected void configure() {
+                Multibinder.newSetBinder(binder(), MiskCallerAuthenticator.class)
+                    .addBinding()
+                    .toInstance(
+                        () -> new MiskCaller(null, "traviscj", ImmutableSet.of("admin_access")));
+              }
+            },
+            new AdminDashboardModule(false),
+            new ConfigDashboardTabModule(false))
+        .run(args);
+  }
 }
