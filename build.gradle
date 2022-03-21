@@ -1,27 +1,101 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    dependencies {
+//        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.18'
+        classpath 'com.squareup.wire:wire-gradle-plugin:4.2.0'
+    }
+}
+
 plugins {
     id 'java'
+    id 'application'
+//    id "com.google.protobuf" version "0.8.18"
+    id 'idea'
+    id "com.squareup.wire" version "4.0.0"
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
 }
 
 group 'io.tcj'
 version '1.0-SNAPSHOT'
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
 }
 
+application {
+    mainClass = 'io.tcj.TraviscjApp'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "build/generated/source/wire/"
+        }
+    }
+}
+wire {
+    sourcePath {
+        srcDir("src/main/proto/")
+    }
+    kotlin {
+        javaInterop = true
+//        includes = ['io.tcj.*']
+    }
+//    java {
+//
+//    }
+}
+//sourceSets.main.java.srcDirs = ['build/generated/source/wire','src/main/java']
 dependencies {
+    implementation 'com.squareup.wire:wire-runtime:4.2.0'
+    implementation "com.squareup.wire:wire-runtime-jvm:4.2.0"
+    implementation "com.squareup.wire:wire-reflector:4.2.0"
+    implementation "com.squareup.wire:wire-moshi-adapter:4.2.0"
+    implementation "com.squareup.retrofit2:converter-wire:2.9.0"
 
     implementation("com.squareup.misk:misk:0.22.0")
     implementation("com.squareup.misk:misk-actions:0.22.0")
     implementation("com.squareup.misk:misk-admin:0.22.0")
     implementation("com.squareup.misk:misk-core:0.22.0")
     implementation("com.squareup.misk:misk-inject:0.22.0")
+    implementation("com.squareup.misk:misk-jdbc:0.22.0")
+    implementation("com.squareup.misk:misk-hibernate:0.22.0")
     implementation("com.squareup.misk:wisp-resource-loader:0.22.0")
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+
+    testImplementation 'com.squareup.misk:misk-testing:0.22.0'
+
+    implementation 'com.google.protobuf:protobuf-java:3.19.4'
+
 }
 
 test {
     useJUnitPlatform()
 }
+//protobuf {
+//    protoc {
+//        artifact = 'com.google.protobuf:protoc:3.8.0'
+//    }
+//
+////    ...
+//    // Locate the codegen plugins
+//    plugins {
+//        // Locate a plugin with name 'grpc'. This step is optional.
+//        // If you don't locate it, protoc will try to use "protoc-gen-grpc" from
+//        // system search path.
+//        grpc {
+//            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.0-pre2'
+//            // or
+//            // path = 'tools/protoc-gen-grpc-java'
+//        }
+//        // Any other plugins
+////        ...
+//    }
+////    ...
+//}

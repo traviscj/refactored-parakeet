@@ -43,8 +43,8 @@ public class TraviscjApp {
                         () -> new MiskCaller(null, "traviscj", ImmutableSet.of("admin_access")));
               }
             },
-            new AdminDashboardModule(false),
-            new ConfigDashboardTabModule(false))
+            new AdminDashboardModule(true),
+            new ConfigDashboardTabModule(true))
         .run(args);
   }
 }
