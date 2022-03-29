@@ -9,6 +9,9 @@ public class TraviscjAppModule extends AbstractModule {
     install(WebActionModule.create(HelloJavaAction.class));
     install(WebActionModule.create(MortgageCalcAction.class));
 
+    install(WebActionModule.create(KvListAction.class));
+    install(WebActionModule.create(KvPutAction.class));
+
     //        install(new ConfigDashboardTabModule(true));
   }
 }

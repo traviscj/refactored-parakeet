@@ -1,5 +1,17 @@
+buildscript {
+    dependencies {
+        classpath "gradle.plugin.org.flywaydb:gradle-plugin-publishing:8.5.1"
+        classpath 'org.postgresql:postgresql:42.3.2'
+        classpath("org.flywaydb:flyway-gradle-plugin:7.15.0")
+    }
+}
 plugins {
+
     id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id "org.flywaydb.flyway" version "8.5.1"
+    id "nu.studer.jooq" version "6.0.1"
 }
 
 group 'io.tcj'
@@ -11,17 +23,109 @@ repositories {
 
 dependencies {
 
+//    implementation()
     implementation("com.squareup.misk:misk:0.22.0")
     implementation("com.squareup.misk:misk-actions:0.22.0")
     implementation("com.squareup.misk:misk-admin:0.22.0")
     implementation("com.squareup.misk:misk-core:0.22.0")
     implementation("com.squareup.misk:misk-inject:0.22.0")
-    implementation("com.squareup.misk:wisp-resource-loader:0.22.0")
+    implementation("com.squareup.misk:misk-jdbc:0.22.0")
+    implementation("com.squareup.misk:misk-jooq:0.22.0")
+    implementation("com.squareup.misk:misk-service:0.22.0")
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    implementation("com.github.docker-java:docker-java:3.2.13")
+
+    implementation("com.squareup.misk:wisp-config:0.22.0")
+    implementation 'com.squareup.misk:wisp-containers-testing:0.22.0'
+    implementation("com.squareup.misk:wisp-deployment:0.22.0")
+    implementation("com.squareup.misk:wisp-resource-loader:0.22.0")
+    implementation("com.squareup.misk:wisp-logging:0.22.0")
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+//    implementation 'org.postgresql:postgresql:42.3.2'
+    jooqGenerator 'org.postgresql:postgresql:42.3.2'
+
+    implementation 'org.flywaydb:flyway-core:8.5.1'
+
+    // https://mvnrepository.com/artifact/io.netty/netty-transport-native-kqueue
+    implementation group: 'io.netty', name: 'netty-transport-native-kqueue', version: '4.1.72.Final'
+    implementation("com.github.docker-java:docker-java-transport-okhttp:3.2.13")
+
 }
 
 test {
     useJUnitPlatform()
 }
+
+application {
+    mainClass = 'io.tcj.TraviscjApp'
+}
+
+shadowJar {
+    archivesBaseName = 'traviscj-shadowed'
+    archiveClassifier = ''
+    archiveVersion = ''
+}
+
+
+// We are using flyway here in order to run the migrations to create a schema.
+// Ensure the migration directory is not called `migrations`. There's more details as to why below.
+flyway {
+    url = "jdbc:postgresql://localhost:5432/traviscj_localdev"
+    user = "root"
+    password = ""
+    schemas = ["public"]
+//    locations = ["classpath:sql/migrations"]
+    locations = ["filesystem:${project.projectDir}/src/main/resources/sql/migrations"]
+//    locations = arrayOf("filesystem:${project.projectDir}/src/main/resources/db-migrations")
+//    sqlMigrationPrefix = "v"
+}
+// More details about the jooq plugin here - https://github.com/etiennestuder/gradle-jooq-plugin
+jooq {
+    version = "3.14.8"
+    edition = nu.studer.gradle.jooq.JooqEdition.OSS
+
+    configurations {
+        main {
+            generateSchemaSourceOnCompilation = true  // default (can be omitted)
+            generationTool {
+                jdbc {
+                    driver = "org.postgresql.Driver"
+                    url = "jdbc:postgresql://localhost:5432/traviscj_codegen"
+                    user = "root"
+                    password = ""
+                }
+                generator {
+                    name = "org.jooq.codegen.DefaultGenerator"
+                    database {
+                        name = "org.jooq.meta.postgres.PostgresDatabase"
+                        inputSchema = "public"
+                        outputSchema = "public"
+                        includes = ".*"
+                        excludes = "(.*?FLYWAY_SCHEMA_HISTORY)|(.*?schema_version)"
+                        recordVersionFields = "version"
+                    }
+                    generate {
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = "io.tcj.jooq"
+                        directory   = "${project.projectDir}/jooq/src/main/java"
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+//val generateJooq by project.tasks
+//generateJooq.dependsOn("flywayMigrate")
+//
+//sourceSets.getByName("main").java.srcDirs
+//        .add(File("${project.projectDir}/src/main/generated/kotlin"))

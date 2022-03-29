@@ -1,3 +1,10 @@
 web:
   port: 8080
   idle_timeout: 30000
+
+data_source:
+  type: POSTGRESQL
+  host: 127.0.0.1
+  database: traviscj_localdev
+  username: root
+  password: ""
