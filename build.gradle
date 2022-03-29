@@ -77,11 +77,9 @@ flyway {
     user = "root"
     password = ""
     schemas = ["public"]
-//    locations = ["classpath:sql/migrations"]
     locations = ["filesystem:${project.projectDir}/src/main/resources/sql/migrations"]
-//    locations = arrayOf("filesystem:${project.projectDir}/src/main/resources/db-migrations")
-//    sqlMigrationPrefix = "v"
 }
+
 // More details about the jooq plugin here - https://github.com/etiennestuder/gradle-jooq-plugin
 jooq {
     version = "3.14.8"
