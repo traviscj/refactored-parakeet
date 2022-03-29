@@ -23,23 +23,22 @@ repositories {
 
 dependencies {
 
-//    implementation()
-    implementation("com.squareup.misk:misk:0.22.0")
-    implementation("com.squareup.misk:misk-actions:0.22.0")
-    implementation("com.squareup.misk:misk-admin:0.22.0")
-    implementation("com.squareup.misk:misk-core:0.22.0")
-    implementation("com.squareup.misk:misk-inject:0.22.0")
-    implementation("com.squareup.misk:misk-jdbc:0.22.0")
-    implementation("com.squareup.misk:misk-jooq:0.22.0")
-    implementation("com.squareup.misk:misk-service:0.22.0")
+    implementation "com.squareup.misk:misk:0.22.0"
+    implementation "com.squareup.misk:misk-actions:0.22.0"
+    implementation "com.squareup.misk:misk-admin:0.22.0"
+    implementation "com.squareup.misk:misk-core:0.22.0"
+    implementation "com.squareup.misk:misk-inject:0.22.0"
+    implementation "com.squareup.misk:misk-jdbc:0.22.0"
+    implementation "com.squareup.misk:misk-jooq:0.22.0"
+    implementation "com.squareup.misk:misk-service:0.22.0"
 
     implementation("com.github.docker-java:docker-java:3.2.13")
 
-    implementation("com.squareup.misk:wisp-config:0.22.0")
+    implementation "com.squareup.misk:wisp-config:0.22.0"
     implementation 'com.squareup.misk:wisp-containers-testing:0.22.0'
-    implementation("com.squareup.misk:wisp-deployment:0.22.0")
-    implementation("com.squareup.misk:wisp-resource-loader:0.22.0")
-    implementation("com.squareup.misk:wisp-logging:0.22.0")
+    implementation "com.squareup.misk:wisp-deployment:0.22.0"
+    implementation "com.squareup.misk:wisp-resource-loader:0.22.0"
+    implementation "com.squareup.misk:wisp-logging:0.22.0"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
