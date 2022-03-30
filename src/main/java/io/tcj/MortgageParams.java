@@ -1,11 +1,16 @@
 package io.tcj;
 
+import io.tcj.protos.mortgage.Mortgage;
+
 public class MortgageParams {
 
   public double principal;
   public double apr;
   public double term;
 
+  public MortgageParams(Mortgage mortgage) {
+    this(mortgage.principal, mortgage.apr, mortgage.term);
+  }
   public MortgageParams(Double principal, Double apr, Double term) {
     this.principal = principal;
     this.apr = apr;

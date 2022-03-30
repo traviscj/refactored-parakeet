@@ -3,6 +3,7 @@ package io.tcj;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
 import com.google.inject.multibindings.Multibinder;
 import misk.MiskApplication;
 import misk.MiskCaller;
@@ -11,6 +12,8 @@ import misk.config.ConfigModule;
 import misk.config.MiskConfig;
 import misk.environment.DeploymentModule;
 import misk.resources.ResourceLoader;
+import misk.security.authz.DevelopmentOnly;
+import misk.security.authz.FakeCallerAuthenticator;
 import misk.security.authz.MiskCallerAuthenticator;
 import misk.web.MiskWebModule;
 import misk.web.dashboard.AdminDashboardModule;
@@ -39,8 +42,9 @@ public class TraviscjApp {
               protected void configure() {
                 Multibinder.newSetBinder(binder(), MiskCallerAuthenticator.class)
                     .addBinding()
-                    .toInstance(
-                        () -> new MiskCaller(null, "traviscj", ImmutableSet.of("admin_access")));
+                    .to(FakeCallerAuthenticator.class);
+                bind(Key.get(MiskCaller.class, DevelopmentOnly.class))
+                    .toInstance(new MiskCaller(null, "traviscj", ImmutableSet.of("admin_access")));
               }
             },
             new AdminDashboardModule(true),
