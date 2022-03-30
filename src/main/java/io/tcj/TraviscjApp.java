@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.multibindings.Multibinder;
+import io.tcj.db.TraviscjDb;
+import io.tcj.db.TraviscjReadyOnlyDb;
 import kotlin.Unit;
 import misk.MiskApplication;
 import misk.MiskCaller;

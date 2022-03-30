@@ -129,7 +129,7 @@ public class Kv extends TableImpl<KvRecord> {
 
     @Override
     public Schema getSchema() {
-        return Public.PUBLIC;
+        return aliased() ? null : Public.PUBLIC;
     }
 
     @Override
@@ -138,8 +138,8 @@ public class Kv extends TableImpl<KvRecord> {
     }
 
     @Override
-    public List<UniqueKey<KvRecord>> getKeys() {
-        return Arrays.<UniqueKey<KvRecord>>asList(Keys.U_NS_K);
+    public List<UniqueKey<KvRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.U_NS_K);
     }
 
     @Override

@@ -8,12 +8,10 @@ buildscript {
         classpath "gradle.plugin.org.flywaydb:gradle-plugin-publishing:8.5.1"
         classpath 'org.postgresql:postgresql:42.3.2'
         classpath("org.flywaydb:flyway-gradle-plugin:7.15.0")
-
     }
 }
 
 plugins {
-    id 'java'
     id 'application'
     id 'idea'
     id "com.squareup.wire" version "4.0.0"
@@ -29,6 +27,7 @@ version '1.0-SNAPSHOT'
 repositories {
     gradlePluginPortal()
     mavenCentral()
+    maven { url "https://s01.oss.sonatype.org/service/local/repositories/comsquareup-1071/content" }
 }
 
 application {
@@ -54,48 +53,43 @@ wire {
     }
 }
 dependencies {
+    implementation "com.squareup.misk:misk-actions:0.23.0"
+    implementation "com.squareup.misk:misk-admin:0.23.0"
+    implementation "com.squareup.misk:misk-core:0.23.0"
+    implementation "com.squareup.misk:misk-grpc-reflect:0.23.0"
+    implementation "com.squareup.misk:misk-inject:0.23.0"
+    implementation "com.squareup.misk:misk-jdbc:0.23.0"
+    implementation "com.squareup.misk:misk-jooq:0.23.0"
+    implementation "com.squareup.misk:misk-service:0.23.0"
+    implementation "com.squareup.misk:misk:0.23.0"
+    implementation "com.squareup.misk:wisp-config:0.23.0"
+    implementation "com.squareup.misk:wisp-deployment:0.23.0"
+    implementation "com.squareup.misk:wisp-logging:0.23.0"
+    implementation "com.squareup.misk:wisp-resource-loader:0.23.0"
+    implementation 'com.squareup.misk:wisp-containers-testing:0.23.0'
+    testImplementation 'com.squareup.misk:misk-testing:0.23.0'
 
-    implementation "com.squareup.misk:misk-actions:0.22.0"
-    implementation "com.squareup.misk:misk-admin:0.22.0"
-    implementation "com.squareup.misk:misk-core:0.22.0"
-    implementation "com.squareup.misk:misk-inject:0.22.0"
-    implementation "com.squareup.misk:misk-jdbc:0.22.0"
-    implementation "com.squareup.misk:misk-jooq:0.22.0"
-    implementation "com.squareup.misk:misk-service:0.22.0"
-    implementation "com.squareup.misk:misk:0.22.0"
-    implementation "com.squareup.misk:wisp-config:0.22.0"
-    implementation "com.squareup.misk:wisp-deployment:0.22.0"
-    implementation "com.squareup.misk:wisp-logging:0.22.0"
-    implementation "com.squareup.misk:wisp-resource-loader:0.22.0"
     implementation "com.squareup.retrofit2:converter-wire:2.9.0"
     implementation "com.squareup.wire:wire-moshi-adapter:4.2.0"
     implementation "com.squareup.wire:wire-reflector:4.2.0"
     implementation "com.squareup.wire:wire-runtime-jvm:4.2.0"
     implementation 'com.google.protobuf:protobuf-java:3.19.4'
-    implementation 'com.squareup.misk:wisp-containers-testing:0.22.0'
+
     implementation 'com.squareup.wire:wire-runtime:4.2.0'
     implementation 'org.flywaydb:flyway-core:8.5.1'
-    implementation("com.github.docker-java:docker-java:3.2.13")
-    implementation("com.squareup.misk:misk-actions:0.22.0")
-    implementation("com.squareup.misk:misk-admin:0.22.0")
-    implementation("com.squareup.misk:misk-core:0.22.0")
-    implementation("com.squareup.misk:misk-grpc-reflect:0.22.0")
-    implementation("com.squareup.misk:misk-hibernate:0.22.0")
-    implementation("com.squareup.misk:misk-inject:0.22.0")
-    implementation("com.squareup.misk:misk-jdbc:0.22.0")
-    implementation("com.squareup.misk:misk:0.22.0")
-    implementation("com.squareup.misk:wisp-resource-loader:0.22.0")
+    implementation "com.github.docker-java:docker-java:3.2.13"
     jooqGenerator 'org.postgresql:postgresql:42.3.2'
-    testImplementation 'com.squareup.misk:misk-testing:0.22.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
 
-//    implementation group: 'io.netty', name: 'netty-transport-native-kqueue', version: '4.1.72.Final'
-//    implementation("com.github.docker-java:docker-java-transport-okhttp:3.2.13")
-
+    implementation group: 'io.netty', name: 'netty-transport-native-kqueue', version: '4.1.72.Final'
+    implementation("com.github.docker-java:docker-java-transport-okhttp:3.2.13")
+}
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 test {
@@ -107,6 +101,9 @@ application {
 }
 
 shadowJar {
+    zip64 true
+    mergeServiceFiles()
+
     archivesBaseName = 'traviscj-shadowed'
     archiveClassifier = ''
     archiveVersion = ''
@@ -120,12 +117,19 @@ flyway {
     user = "root"
     password = ""
     schemas = ["public"]
-    locations = ["filesystem:${project.projectDir}/src/main/resources/sql/migrations"]
+    locations = ["filesystem:src/main/resources/db/migration"]
+}
+task migrateCodegen(type: org.flywaydb.gradle.task.FlywayMigrateTask) {
+    url = 'jdbc:postgresql://localhost:5432/traviscj_codegen'
+    user = "root"
+    password = ""
+    schemas = ["public"]
+    locations = ["filesystem:src/main/resources/db/migration"]
 }
 
 // More details about the jooq plugin here - https://github.com/etiennestuder/gradle-jooq-plugin
 jooq {
-    version = "3.14.8"
+    version = "3.16.4"
     edition = nu.studer.gradle.jooq.JooqEdition.OSS
 
     configurations {
@@ -164,9 +168,22 @@ jooq {
         }
     }
 }
+tasks.named('generateJooq').configure {
+    // ensure database schema has been prepared by Flyway before generating the jOOQ sources
+    dependsOn tasks.named('migrateCodegen')
 
-//val generateJooq by project.tasks
-//generateJooq.dependsOn("flywayMigrate")
-//
-//sourceSets.getByName("main").java.srcDirs
-//        .add(File("${project.projectDir}/src/main/generated/kotlin"))
+    // declare Flyway migration scripts as inputs on the jOOQ task
+    inputs.files(fileTree('src/main/resources/db/migration'))
+            .withPropertyName('migrations')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    // make jOOQ task participate in incremental builds (and build caching)
+    allInputsDeclared = false
+}
+
+//tasks.named('flywayMigrate').configure {
+//    // declare Flyway migration scripts as inputs on the jOOQ task
+//    inputs.files(fileTree('src/main/resources/db/migration'))
+//            .withPropertyName('migrations')
+//            .withPathSensitivity(PathSensitivity.RELATIVE)
+//}
