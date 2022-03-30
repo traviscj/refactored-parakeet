@@ -401,4 +401,23 @@ public class KvRecord extends TableRecordImpl<KvRecord> implements Record9<Integ
         setK(k);
         setV(v);
     }
+
+    /**
+     * Create a detached, initialised KvRecord
+     */
+    public KvRecord(io.tcj.jooq.tables.pojos.Kv value) {
+        super(Kv.KV);
+
+        if (value != null) {
+            setId(value.getId());
+            setCreatedAt(value.getCreatedAt());
+            setUpdatedAt(value.getUpdatedAt());
+            setVersion(value.getVersion());
+            setFeedSyncId(value.getFeedSyncId());
+            setShard(value.getShard());
+            setNs(value.getNs());
+            setK(value.getK());
+            setV(value.getV());
+        }
+    }
 }
