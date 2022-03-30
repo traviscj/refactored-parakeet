@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package io.tcj;
+
+option java_multiple_files = true;
+option java_package = "io.tcj.protos.mortgage";
+option java_outer_classname = "MortgageProtos";
+//option kotlin = "io.tcj.protos.mortgage";
+
+import 'google/protobuf/timestamp.proto';
+
+message Mortgage {
+  optional double principal = 1;
+  optional double apr = 2;
+  optional double term = 3;
+}
+message Coupon {
+  optional double monthly = 1;
+}
+
+service MortgageService {
+  rpc Calc (Mortgage) returns (Coupon);
+}

@@ -1,14 +1,23 @@
 buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
     dependencies {
+        classpath 'com.squareup.wire:wire-gradle-plugin:4.2.0'
         classpath "gradle.plugin.org.flywaydb:gradle-plugin-publishing:8.5.1"
         classpath 'org.postgresql:postgresql:42.3.2'
         classpath("org.flywaydb:flyway-gradle-plugin:7.15.0")
+
     }
 }
-plugins {
 
+plugins {
     id 'java'
     id 'application'
+    id 'idea'
+    id "com.squareup.wire" version "4.0.0"
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id "org.flywaydb.flyway" version "8.5.1"
     id "nu.studer.jooq" version "6.0.1"
@@ -18,12 +27,34 @@ group 'io.tcj'
 version '1.0-SNAPSHOT'
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
 }
 
+application {
+    mainClass = 'io.tcj.TraviscjApp'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "build/generated/source/wire/"
+        }
+    }
+}
+wire {
+    sourcePath {
+        srcDir("src/main/proto/")
+    }
+    kotlin {
+        javaInterop = true
+        rpcCallStyle = "blocking"
+        rpcRole = "server"
+        singleMethodServices = true
+    }
+}
 dependencies {
 
-    implementation "com.squareup.misk:misk:0.22.0"
     implementation "com.squareup.misk:misk-actions:0.22.0"
     implementation "com.squareup.misk:misk-admin:0.22.0"
     implementation "com.squareup.misk:misk-core:0.22.0"
@@ -31,26 +62,39 @@ dependencies {
     implementation "com.squareup.misk:misk-jdbc:0.22.0"
     implementation "com.squareup.misk:misk-jooq:0.22.0"
     implementation "com.squareup.misk:misk-service:0.22.0"
-
-    implementation("com.github.docker-java:docker-java:3.2.13")
-
+    implementation "com.squareup.misk:misk:0.22.0"
     implementation "com.squareup.misk:wisp-config:0.22.0"
-    implementation 'com.squareup.misk:wisp-containers-testing:0.22.0'
     implementation "com.squareup.misk:wisp-deployment:0.22.0"
-    implementation "com.squareup.misk:wisp-resource-loader:0.22.0"
     implementation "com.squareup.misk:wisp-logging:0.22.0"
-
+    implementation "com.squareup.misk:wisp-resource-loader:0.22.0"
+    implementation "com.squareup.retrofit2:converter-wire:2.9.0"
+    implementation "com.squareup.wire:wire-moshi-adapter:4.2.0"
+    implementation "com.squareup.wire:wire-reflector:4.2.0"
+    implementation "com.squareup.wire:wire-runtime-jvm:4.2.0"
+    implementation 'com.google.protobuf:protobuf-java:3.19.4'
+    implementation 'com.squareup.misk:wisp-containers-testing:0.22.0'
+    implementation 'com.squareup.wire:wire-runtime:4.2.0'
+    implementation 'org.flywaydb:flyway-core:8.5.1'
+    implementation("com.github.docker-java:docker-java:3.2.13")
+    implementation("com.squareup.misk:misk-actions:0.22.0")
+    implementation("com.squareup.misk:misk-admin:0.22.0")
+    implementation("com.squareup.misk:misk-core:0.22.0")
+    implementation("com.squareup.misk:misk-grpc-reflect:0.22.0")
+    implementation("com.squareup.misk:misk-hibernate:0.22.0")
+    implementation("com.squareup.misk:misk-inject:0.22.0")
+    implementation("com.squareup.misk:misk-jdbc:0.22.0")
+    implementation("com.squareup.misk:misk:0.22.0")
+    implementation("com.squareup.misk:wisp-resource-loader:0.22.0")
+    jooqGenerator 'org.postgresql:postgresql:42.3.2'
+    testImplementation 'com.squareup.misk:misk-testing:0.22.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
-//    implementation 'org.postgresql:postgresql:42.3.2'
-    jooqGenerator 'org.postgresql:postgresql:42.3.2'
 
-    implementation 'org.flywaydb:flyway-core:8.5.1'
-
-    // https://mvnrepository.com/artifact/io.netty/netty-transport-native-kqueue
-    implementation group: 'io.netty', name: 'netty-transport-native-kqueue', version: '4.1.72.Final'
-    implementation("com.github.docker-java:docker-java-transport-okhttp:3.2.13")
+//    implementation group: 'io.netty', name: 'netty-transport-native-kqueue', version: '4.1.72.Final'
+//    implementation("com.github.docker-java:docker-java-transport-okhttp:3.2.13")
 
 }
 
@@ -112,7 +156,7 @@ jooq {
                     }
                     target {
                         packageName = "io.tcj.jooq"
-                        directory   = "${project.projectDir}/jooq/src/main/java"
+                        directory = "${project.projectDir}/jooq/src/main/java"
                     }
 
                 }
