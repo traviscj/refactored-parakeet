@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package io.tcj;
+
+option java_multiple_files = true;
+option java_package = "io.tcj.protos.kv";
+
+import 'google/protobuf/timestamp.proto';
+
+message Kv {
+  optional string ns = 1;
+  optional string k = 2;
+  optional string v = 3;
+}
+
+message ListKvReq {
+  optional string ns = 1;
+  optional string k_prefix = 2;
+  optional int32 limit = 3 [default = 50];
+}
+
+message ListKvResp {
+  repeated Kv kv = 1;
+}
+
+service KvService {
+  rpc List (ListKvReq) returns (ListKvResp);
+  rpc Put (Kv) returns (Kv);
+}

@@ -1,4 +1,4 @@
-package io.tcj;
+package io.tcj.mortgage;
 
 import io.tcj.protos.mortgage.Coupon;
 import io.tcj.protos.mortgage.Mortgage;
