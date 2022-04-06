@@ -13,12 +13,17 @@ message Kv {
   optional string v = 3;
 }
 
+message ListKvReq {
+  optional string ns = 1;
+  optional string k_prefix = 2;
+  optional int32 limit = 3 [default = 50];
+}
+
 message ListKvResp {
   repeated Kv kv = 1;
 }
 
-message Empty {}
 service KvService {
-  rpc List (Empty) returns (ListKvResp);
+  rpc List (ListKvReq) returns (ListKvResp);
   rpc Put (Kv) returns (Kv);
 }

@@ -1,8 +1,8 @@
 package io.tcj.keyvalue;
 
-import io.tcj.protos.kv.Empty;
 import io.tcj.protos.kv.Kv;
 import io.tcj.protos.kv.KvServiceListBlockingServer;
+import io.tcj.protos.kv.ListKvReq;
 import io.tcj.protos.kv.ListKvResp;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -14,10 +14,10 @@ public class KvListAction implements WebAction, KvServiceListBlockingServer {
 
   @NotNull
   @Override
-  public ListKvResp List(@NotNull Empty request) {
+  public ListKvResp List(@NotNull ListKvReq request) {
     return new ListKvResp.Builder()
         .kv(
-            kvStore.kvRecords().stream()
+            kvStore.kvRecords(request.ns, request.k_prefix, request.limit).stream()
                 .map(r -> new Kv.Builder().ns(r.getNs()).k(r.getK()).v(r.getV()).build())
                 .collect(Collectors.toList()))
         .build();
