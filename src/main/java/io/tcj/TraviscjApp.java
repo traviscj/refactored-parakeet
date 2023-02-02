@@ -52,6 +52,7 @@ public class TraviscjApp {
               return Unit.INSTANCE;
             }));
 
+
     new MiskApplication(
             new MiskRealServiceModule(),
             new MiskWebModule(config.web),

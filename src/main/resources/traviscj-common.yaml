@@ -1,5 +1,5 @@
 web:
-  port: 8080
+  port: 1337
   idle_timeout: 30000
   http2: true
 

@@ -4,12 +4,13 @@ import io.tcj.protos.kv.Kv;
 import io.tcj.protos.kv.KvServiceListBlockingServer;
 import io.tcj.protos.kv.ListKvReq;
 import io.tcj.protos.kv.ListKvResp;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
 import misk.web.actions.WebAction;
 import org.jetbrains.annotations.NotNull;
 
-public class KvListAction implements WebAction, KvServiceListBlockingServer {
+import javax.inject.Inject;
+import java.util.stream.Collectors;
+
+public class KvListRpc implements WebAction, KvServiceListBlockingServer {
   @Inject KvStore kvStore;
 
   @NotNull

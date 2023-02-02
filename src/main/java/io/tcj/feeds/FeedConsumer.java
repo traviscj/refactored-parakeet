@@ -42,13 +42,4 @@ public class FeedConsumer<Rec extends FeedEntry<Rec>> {
 
     feedCursorStore.put(feedConsumerDef.feedName(), feedConsumerDef.shard(), fetchResponse.next_after());
   }
-
-  interface FeedCursorStore {
-    FeedCursor get(String feedName, int shard);
-    void put(String feedName, int shard, String cursor);
-  }
-
-  record FeedConsumerDef(String feedName, int shard, int limit) {
-
-  }
 }

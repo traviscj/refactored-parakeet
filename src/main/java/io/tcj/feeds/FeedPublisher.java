@@ -1,8 +1,8 @@
 package io.tcj.feeds;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.inject.Inject;
 
 /**
  * finds a selection of unpublished records and assigns sequential feed_sync_id to them.
@@ -16,15 +16,9 @@ import javax.inject.Inject;
  * </ul>
  */
 public class FeedPublisher {
-  @Inject
-  SequenceStore sequenceStore;
+  @Inject SequenceStore sequenceStore;
   @Inject PublishedFeedDef publishedFeedDef;
   @Inject DbFeedFetcher dbFeedFetcher;
-
-  public interface DbFeedFetcher {
-    int publish(int limit);
-    List<FeedEntry<?>> fetchUnpublished(long sequenceValue, int limit);
-  }
 
   public void processBatch() {
     Sequence sequence = sequenceStore.lookup(publishedFeedDef.name());
@@ -40,12 +34,4 @@ public class FeedPublisher {
     sequenceStore.put(publishedFeedDef.name(), sequence.value() + numRecords);
   }
 
-  record Sequence(String name, long value) {}
-
-  interface SequenceStore {
-    Sequence lookup(String sequenceName);
-    void put(String sequenceName, long nextSequenceValue);
-  }
-
-  record PublishedFeedDef(String name, int maxBatchSize) {}
 }

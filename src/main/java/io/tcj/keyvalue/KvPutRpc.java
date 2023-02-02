@@ -2,11 +2,12 @@ package io.tcj.keyvalue;
 
 import io.tcj.protos.kv.Kv;
 import io.tcj.protos.kv.KvServicePutBlockingServer;
-import javax.inject.Inject;
 import misk.web.actions.WebAction;
 import org.jetbrains.annotations.NotNull;
 
-public class KvPutAction implements WebAction, KvServicePutBlockingServer {
+import javax.inject.Inject;
+
+public class KvPutRpc implements WebAction, KvServicePutBlockingServer {
   @Inject KvStore kvStore;
 
   @NotNull
