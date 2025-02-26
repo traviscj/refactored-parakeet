@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package io.tcj;
+
+option java_multiple_files = true;
+option java_package = "io.tcj.protos.flaggers";
+
+
+message FlaggerDef {
+  optional string name = 1;
+  optional int64 rollout_pct = 2;
+
+}

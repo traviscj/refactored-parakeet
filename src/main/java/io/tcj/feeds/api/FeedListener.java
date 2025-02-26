@@ -1,4 +1,4 @@
-package io.tcj.feeds;
+package io.tcj.feeds.api;
 
 import java.util.List;
 

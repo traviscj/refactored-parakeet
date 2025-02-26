@@ -2,6 +2,7 @@ package io.tcj.feeds;
 
 import io.tcj.feeds.FeedEntryWebAction.FeedFetchRequest;
 import io.tcj.feeds.FeedEntryWebAction.FeedFetchResponse;
+import io.tcj.feeds.api.FeedEntry;
 
 /**
  * an internal version of the web action, operating on actual DTO objects.

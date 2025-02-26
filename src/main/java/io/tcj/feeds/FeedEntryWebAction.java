@@ -2,9 +2,9 @@ package io.tcj.feeds;
 
 import java.util.List;
 import javax.inject.Inject;
-import misk.web.PathParam;
+
+import io.tcj.feeds.api.FeedEntry;
 import misk.web.Post;
-import retrofit2.Call;
 import retrofit2.http.Body;
 
 /**

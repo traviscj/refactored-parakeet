@@ -1,4 +1,6 @@
-package io.tcj.feeds;
+package io.tcj.feeds.api;
+
+import io.tcj.feeds.model.FeedCursor;
 
 /**
  * envelope for a feed-published record, along with its associated {@link FeedCursor}.

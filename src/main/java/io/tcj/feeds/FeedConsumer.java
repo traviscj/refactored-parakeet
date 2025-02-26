@@ -2,6 +2,12 @@ package io.tcj.feeds;
 
 import io.tcj.feeds.FeedEntryWebAction.FeedFetchRequest;
 import io.tcj.feeds.FeedEntryWebAction.FeedFetchResponse;
+import io.tcj.feeds.api.FeedCursorStore;
+import io.tcj.feeds.api.FeedEntry;
+import io.tcj.feeds.api.FeedListener;
+import io.tcj.feeds.model.FeedConsumerDef;
+import io.tcj.feeds.model.FeedCursor;
+
 import javax.inject.Inject;
 
 /**
@@ -25,7 +31,8 @@ import javax.inject.Inject;
  */
 public class FeedConsumer<Rec extends FeedEntry<Rec>> {
   @Inject FeedCursorStore feedCursorStore;
-  @Inject FeedConsumerDef feedConsumerDef;
+  @Inject
+  FeedConsumerDef feedConsumerDef;
   @Inject FeedListener<Rec> feedListener;
   @Inject FeedEntryFetcher<Rec> feedEntryFetcher;
 

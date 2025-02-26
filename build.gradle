@@ -53,21 +53,21 @@ wire {
     }
 }
 dependencies {
-    implementation "com.squareup.misk:misk-actions:0.23.0"
-    implementation "com.squareup.misk:misk-admin:0.23.0"
-    implementation "com.squareup.misk:misk-core:0.23.0"
-    implementation "com.squareup.misk:misk-grpc-reflect:0.23.0"
-    implementation "com.squareup.misk:misk-inject:0.23.0"
-    implementation "com.squareup.misk:misk-jdbc:0.23.0"
-    implementation "com.squareup.misk:misk-jooq:0.23.0"
-    implementation "com.squareup.misk:misk-service:0.23.0"
-    implementation "com.squareup.misk:misk:0.23.0"
-    implementation "com.squareup.misk:wisp-config:0.23.0"
-    implementation "com.squareup.misk:wisp-deployment:0.23.0"
-    implementation "com.squareup.misk:wisp-logging:0.23.0"
-    implementation "com.squareup.misk:wisp-resource-loader:0.23.0"
-    implementation 'com.squareup.misk:wisp-containers-testing:0.23.0'
-    testImplementation 'com.squareup.misk:misk-testing:0.23.0'
+    implementation "com.squareup.misk:misk-actions:0.24.0"
+    implementation "com.squareup.misk:misk-admin:0.24.0"
+    implementation "com.squareup.misk:misk-core:0.24.0"
+    implementation "com.squareup.misk:misk-grpc-reflect:0.24.0"
+    implementation "com.squareup.misk:misk-inject:0.24.0"
+    implementation "com.squareup.misk:misk-jdbc:0.24.0"
+    implementation "com.squareup.misk:misk-jooq:0.24.0"
+    implementation "com.squareup.misk:misk-service:0.24.0"
+    implementation "com.squareup.misk:misk:0.24.0"
+    implementation "com.squareup.misk:wisp-config:0.24.0"
+    implementation "com.squareup.misk:wisp-deployment:0.24.0"
+    implementation "com.squareup.misk:wisp-logging:0.24.0"
+    implementation "com.squareup.misk:wisp-resource-loader:0.24.0"
+    implementation 'com.squareup.misk:wisp-containers-testing:0.24.0'
+    testImplementation 'com.squareup.misk:misk-testing:0.24.0'
 
     implementation "com.squareup.retrofit2:converter-wire:2.9.0"
     implementation "com.squareup.wire:wire-moshi-adapter:4.2.0"

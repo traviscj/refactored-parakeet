@@ -1,5 +1,11 @@
 package io.tcj.feeds;
 
+import io.tcj.feeds.api.DbFeedFetcher;
+import io.tcj.feeds.api.FeedEntry;
+import io.tcj.feeds.api.SequenceStore;
+import io.tcj.feeds.model.PublishedFeedDef;
+import io.tcj.feeds.model.Sequence;
+
 import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -17,8 +23,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class FeedPublisher {
   @Inject SequenceStore sequenceStore;
-  @Inject PublishedFeedDef publishedFeedDef;
-  @Inject DbFeedFetcher dbFeedFetcher;
+  @Inject
+  PublishedFeedDef publishedFeedDef;
+  @Inject
+  DbFeedFetcher dbFeedFetcher;
 
   public void processBatch() {
     Sequence sequence = sequenceStore.lookup(publishedFeedDef.name());

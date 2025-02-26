@@ -1,4 +1,4 @@
-package io.tcj.feeds;
+package io.tcj.feeds.model;
 
 /**
  * stores the current position in the feed-published table for the <em>API</em> layer.

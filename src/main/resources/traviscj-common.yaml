@@ -2,6 +2,11 @@ web:
   port: 1337
   idle_timeout: 30000
   http2: true
+  cors:
+    "*":
+      allowedOrigins:
+      - "http://localhost:3000"
+      - "*"
 
 data_source:
   type: POSTGRESQL

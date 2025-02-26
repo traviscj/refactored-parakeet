@@ -1,5 +1,7 @@
-package io.tcj.feeds;
+package io.tcj.feeds.impl;
 
+import io.tcj.feeds.api.FeedCursorStore;
+import io.tcj.feeds.model.FeedCursor;
 import io.tcj.jooq.tables.records.KvRecord;
 import io.tcj.keyvalue.KvStore;
 

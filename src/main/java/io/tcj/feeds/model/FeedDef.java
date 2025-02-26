@@ -1,4 +1,4 @@
-package io.tcj.feeds;
+package io.tcj.feeds.model;
 
 public interface FeedDef {
 

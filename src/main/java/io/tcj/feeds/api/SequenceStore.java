@@ -1,6 +1,8 @@
-package io.tcj.feeds;
+package io.tcj.feeds.api;
 
-interface SequenceStore {
+import io.tcj.feeds.model.Sequence;
+
+public interface SequenceStore {
     Sequence lookup(String sequenceName);
 
     void put(String sequenceName, long nextSequenceValue);
