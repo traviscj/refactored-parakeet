@@ -1,3 +1,5 @@
+
+
 web:
   port: 1337
   idle_timeout: 30000
@@ -9,8 +11,8 @@ web:
       - "*"
 
 data_source:
-  type: POSTGRESQL
-  host: 127.0.0.1
+  type: MYSQL
+  host: localhost
   database: traviscj_localdev
   username: root
   password: ""

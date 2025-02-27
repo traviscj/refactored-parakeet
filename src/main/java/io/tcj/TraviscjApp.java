@@ -23,14 +23,18 @@ import misk.security.authz.DevelopmentOnly;
 import misk.security.authz.FakeCallerAuthenticator;
 import misk.security.authz.MiskCallerAuthenticator;
 import misk.web.MiskWebModule;
-import misk.web.dashboard.AdminDashboardModule;
-import misk.web.dashboard.ConfigDashboardTabModule;
+import misk.web.dashboard.AdminDashboardTestingModule;
 import wisp.deployment.Deployment;
 import wisp.deployment.DeploymentKt;
 
 public class TraviscjApp {
   public static void main(String[] args) {
-    Deployment deployment = DeploymentKt.getPRODUCTION();
+
+      // want DEVELOPMENT, but then get docker db, which don't want.
+      // so use PRODUCTION, but that implies a bunch of security stuff i think?
+    Deployment deployment =
+//            DeploymentKt.getDEVELOPMENT();
+            DeploymentKt.getPRODUCTION();
     TraviscjConfig config =
         MiskConfig.load(
             TraviscjConfig.class,
@@ -48,6 +52,7 @@ public class TraviscjApp {
             RealDatabasePool.INSTANCE,
             kotlin.jvm.JvmClassMappingKt.getKotlinClass(TraviscjReadyOnlyDb.class),
             new JooqTimestampRecordListenerOptions(true, "created_at", "updated_at"),
+            true,
             (configuration -> {
               return Unit.INSTANCE;
             }));
@@ -63,15 +68,17 @@ public class TraviscjApp {
             new AbstractModule() {
               @Override
               protected void configure() {
+                  install(new AdminDashboardTestingModule());
                 Multibinder.newSetBinder(binder(), MiskCallerAuthenticator.class)
                     .addBinding()
                     .to(FakeCallerAuthenticator.class);
+
                 bind(Key.get(MiskCaller.class, DevelopmentOnly.class))
                     .toInstance(new MiskCaller(null, "traviscj", ImmutableSet.of("admin_access")));
               }
-            },
-            new AdminDashboardModule(true),
-            new ConfigDashboardTabModule(true))
+            }
+//            new AdminDashboardModule(true)
+            )
         .run(args);
   }
 }

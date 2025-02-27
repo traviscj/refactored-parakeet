@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.SelectConditionStep;
 
 import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public class KvStore {
           KvRecord kvRecord = new KvRecord();
           kvRecord.setNs(ns);
           kvRecord.setK(k);
-          kvRecord.setV(v);
+          kvRecord.setV(v.getBytes(StandardCharsets.UTF_8));
 
           jooqSession.getCtx().insertInto(KV).set(kvRecord).execute();
           return null;

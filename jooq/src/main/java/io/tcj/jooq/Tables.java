@@ -8,13 +8,13 @@ import io.tcj.jooq.tables.Kv;
 
 
 /**
- * Convenience access to all tables in public.
+ * Convenience access to all tables in the default schema.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {
 
     /**
-     * The table <code>public.kv</code>.
+     * The table <code>kv</code>.
      */
     public static final Kv KV = Kv.KV;
 }

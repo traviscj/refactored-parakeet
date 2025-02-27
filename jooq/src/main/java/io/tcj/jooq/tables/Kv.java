@@ -4,21 +4,27 @@
 package io.tcj.jooq.tables;
 
 
+import io.tcj.jooq.DefaultSchema;
+import io.tcj.jooq.Indexes;
 import io.tcj.jooq.Keys;
-import io.tcj.jooq.Public;
 import io.tcj.jooq.tables.records.KvRecord;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
+import org.jooq.Condition;
 import org.jooq.Field;
-import org.jooq.ForeignKey;
 import org.jooq.Identity;
+import org.jooq.Index;
 import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Row9;
+import org.jooq.PlainSQL;
+import org.jooq.QueryPart;
+import org.jooq.SQL;
 import org.jooq.Schema;
+import org.jooq.Select;
+import org.jooq.Stringly;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -37,7 +43,7 @@ public class Kv extends TableImpl<KvRecord> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The reference instance of <code>public.kv</code>
+     * The reference instance of <code>kv</code>
      */
     public static final Kv KV = new Kv();
 
@@ -50,101 +56,97 @@ public class Kv extends TableImpl<KvRecord> {
     }
 
     /**
-     * The column <code>public.kv.id</code>.
+     * The column <code>kv.id</code>.
      */
-    public final TableField<KvRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<KvRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>public.kv.created_at</code>.
+     * The column <code>kv.created_at</code>.
      */
-    public final TableField<KvRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field("now()", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<KvRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP(3)"), SQLDataType.LOCALDATETIME)), this, "");
 
     /**
-     * The column <code>public.kv.updated_at</code>.
+     * The column <code>kv.updated_at</code>.
      */
-    public final TableField<KvRecord, LocalDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field("now()", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<KvRecord, LocalDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP(3)"), SQLDataType.LOCALDATETIME)), this, "");
 
     /**
-     * The column <code>public.kv.version</code>.
-     */
-    public final TableField<KvRecord, Integer> VERSION = createField(DSL.name("version"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "");
-
-    /**
-     * The column <code>public.kv.feed_sync_id</code>.
+     * The column <code>kv.feed_sync_id</code>.
      */
     public final TableField<KvRecord, Long> FEED_SYNC_ID = createField(DSL.name("feed_sync_id"), SQLDataType.BIGINT, this, "");
 
     /**
-     * The column <code>public.kv.shard</code>.
+     * The column <code>kv.shard</code>.
      */
-    public final TableField<KvRecord, Integer> SHARD = createField(DSL.name("shard"), SQLDataType.INTEGER.defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "");
+    public final TableField<KvRecord, Integer> SHARD = createField(DSL.name("shard"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
-     * The column <code>public.kv.ns</code>.
+     * The column <code>kv.ns</code>.
      */
-    public final TableField<KvRecord, String> NS = createField(DSL.name("ns"), SQLDataType.VARCHAR(255), this, "");
+    public final TableField<KvRecord, String> NS = createField(DSL.name("ns"), SQLDataType.VARCHAR(255).nullable(false).defaultValue(DSL.inline("-", SQLDataType.VARCHAR)), this, "");
 
     /**
-     * The column <code>public.kv.k</code>.
+     * The column <code>kv.k</code>.
      */
-    public final TableField<KvRecord, String> K = createField(DSL.name("k"), SQLDataType.VARCHAR(255), this, "");
+    public final TableField<KvRecord, String> K = createField(DSL.name("k"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
-     * The column <code>public.kv.v</code>.
+     * The column <code>kv.v</code>.
      */
-    public final TableField<KvRecord, String> V = createField(DSL.name("v"), SQLDataType.VARCHAR(4096), this, "");
+    public final TableField<KvRecord, byte[]> V = createField(DSL.name("v"), SQLDataType.BLOB.nullable(false), this, "");
 
     private Kv(Name alias, Table<KvRecord> aliased) {
-        this(alias, aliased, null);
+        this(alias, aliased, (Field<?>[]) null, null);
     }
 
-    private Kv(Name alias, Table<KvRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    private Kv(Name alias, Table<KvRecord> aliased, Field<?>[] parameters, Condition where) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table(), where);
     }
 
     /**
-     * Create an aliased <code>public.kv</code> table reference
+     * Create an aliased <code>kv</code> table reference
      */
     public Kv(String alias) {
         this(DSL.name(alias), KV);
     }
 
     /**
-     * Create an aliased <code>public.kv</code> table reference
+     * Create an aliased <code>kv</code> table reference
      */
     public Kv(Name alias) {
         this(alias, KV);
     }
 
     /**
-     * Create a <code>public.kv</code> table reference
+     * Create a <code>kv</code> table reference
      */
     public Kv() {
         this(DSL.name("kv"), null);
     }
 
-    public <O extends Record> Kv(Table<O> child, ForeignKey<O, KvRecord> key) {
-        super(child, key, KV);
-    }
-
     @Override
     public Schema getSchema() {
-        return aliased() ? null : Public.PUBLIC;
+        return aliased() ? null : DefaultSchema.DEFAULT_SCHEMA;
     }
 
     @Override
-    public Identity<KvRecord, Integer> getIdentity() {
-        return (Identity<KvRecord, Integer>) super.getIdentity();
+    public List<Index> getIndexes() {
+        return Arrays.asList(Indexes.KV_IDX_CA);
+    }
+
+    @Override
+    public Identity<KvRecord, Long> getIdentity() {
+        return (Identity<KvRecord, Long>) super.getIdentity();
+    }
+
+    @Override
+    public UniqueKey<KvRecord> getPrimaryKey() {
+        return Keys.KEY_KV_PRIMARY;
     }
 
     @Override
     public List<UniqueKey<KvRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.U_NS_K);
-    }
-
-    @Override
-    public TableField<KvRecord, Integer> getRecordVersion() {
-        return VERSION;
+        return Arrays.asList(Keys.KEY_KV_U_FSI, Keys.KEY_KV_U_NS_K);
     }
 
     @Override
@@ -155,6 +157,11 @@ public class Kv extends TableImpl<KvRecord> {
     @Override
     public Kv as(Name alias) {
         return new Kv(alias, this);
+    }
+
+    @Override
+    public Kv as(Table<?> alias) {
+        return new Kv(alias.getQualifiedName(), this);
     }
 
     /**
@@ -173,12 +180,95 @@ public class Kv extends TableImpl<KvRecord> {
         return new Kv(name, null);
     }
 
-    // -------------------------------------------------------------------------
-    // Row9 type methods
-    // -------------------------------------------------------------------------
-
+    /**
+     * Rename this table
+     */
     @Override
-    public Row9<Integer, LocalDateTime, LocalDateTime, Integer, Long, Integer, String, String, String> fieldsRow() {
-        return (Row9) super.fieldsRow();
+    public Kv rename(Table<?> name) {
+        return new Kv(name.getQualifiedName(), null);
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Kv where(Condition condition) {
+        return new Kv(getQualifiedName(), aliased() ? this : null, null, condition);
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Kv where(Collection<? extends Condition> conditions) {
+        return where(DSL.and(conditions));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Kv where(Condition... conditions) {
+        return where(DSL.and(conditions));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Kv where(Field<Boolean> condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public Kv where(SQL condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public Kv where(@Stringly.SQL String condition) {
+        return where(DSL.condition(condition));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public Kv where(@Stringly.SQL String condition, Object... binds) {
+        return where(DSL.condition(condition, binds));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    @PlainSQL
+    public Kv where(@Stringly.SQL String condition, QueryPart... parts) {
+        return where(DSL.condition(condition, parts));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Kv whereExists(Select<?> select) {
+        return where(DSL.exists(select));
+    }
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @Override
+    public Kv whereNotExists(Select<?> select) {
+        return where(DSL.notExists(select));
     }
 }

@@ -14,8 +14,8 @@ import org.jooq.impl.Internal;
 
 
 /**
- * A class modelling foreign key relationships and constraints of tables in
- * public.
+ * A class modelling foreign key relationships and constraints of tables in the
+ * default schema.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Keys {
@@ -24,5 +24,7 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<KvRecord> U_NS_K = Internal.createUniqueKey(Kv.KV, DSL.name("u_ns_k"), new TableField[] { Kv.KV.NS, Kv.KV.K }, true);
+    public static final UniqueKey<KvRecord> KEY_KV_PRIMARY = Internal.createUniqueKey(Kv.KV, DSL.name("KEY_kv_PRIMARY"), new TableField[] { Kv.KV.ID }, true);
+    public static final UniqueKey<KvRecord> KEY_KV_U_FSI = Internal.createUniqueKey(Kv.KV, DSL.name("KEY_kv_u_fsi"), new TableField[] { Kv.KV.FEED_SYNC_ID }, true);
+    public static final UniqueKey<KvRecord> KEY_KV_U_NS_K = Internal.createUniqueKey(Kv.KV, DSL.name("KEY_kv_u_ns_k"), new TableField[] { Kv.KV.NS, Kv.KV.K }, true);
 }

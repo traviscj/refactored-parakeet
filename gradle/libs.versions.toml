@@ -1,0 +1,109 @@
+[versions]
+awaitility = "4.2.2"
+aws1 = "1.12.781"
+aws2 = "2.30.23"
+bucket4j = "8.8.0"
+datadog = "1.46.0"
+dependencyAnalysisPlugin = "2.8.2"
+detekt = "1.23.7"
+docker = "3.4.1"
+flyway = "11.3.3"
+flywayPlugin = "11.3.3"
+googleAuth = "1.32.1"
+googleHttp = "1.46.1"
+hoplite = "2.7.5"
+jackson = "2.18.2"
+jooqPlugin = "9.0"
+junit = "5.11.4"
+kotest = "5.9.1"
+kotlin = "2.1.10"
+kotlinBinaryCompatibilityPlugin = "0.17.0"
+mavenPublish = "0.28.0"
+micrometer = "1.12.13"
+misk = "2025.02.24.122634-f35741f"
+netty = "4.1.118.Final"
+okHttp = "5.0.0-alpha.14"
+protobuf = "3.25.6"
+retrofit = "2.11.0"
+sqldelight = "2.0.2"
+wire = "5.2.1"
+
+[libraries]
+assertj = { module = "org.assertj:assertj-core", version = "3.27.3" }
+
+dockerApi = { module = "com.github.docker-java:docker-java-api", version.ref = "docker" }
+dockerCore = { module = "com.github.docker-java:docker-java-core", version.ref = "docker" }
+dockerTransportCore = { module = "com.github.docker-java:docker-java-transport", version.ref = "docker" }
+dockerTransportHttpClient = { module = "com.github.docker-java:docker-java-transport-httpclient5", version.ref = "docker" }
+flyway = { module = "org.flywaydb:flyway", version.ref = "flyway" }
+flywayCore = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flywayMysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
+grpcApi = { module = "io.grpc:grpc-api", version = "1.70.0" }
+grpcBom = { module = "io.grpc:grpc-bom", version = "1.70.0" }
+grpcGenJava = { module = "io.grpc:protoc-gen-grpc-java", version = "1.70.0" }
+grpcNetty = { module = "io.grpc:grpc-netty", version = "1.70.0" }
+grpcProtobuf = { module = "io.grpc:grpc-protobuf", version = "1.70.0" }
+grpcStub = { module = "io.grpc:grpc-stub", version = "1.70.0" }
+guava = { module = "com.google.guava:guava" }
+guavaBom = { module = "com.google.guava:guava-bom", version = "33.4.0-jre" }
+guavaTestLib = { module = "com.google.guava:guava-testlib" }
+guice = { module = "com.google.inject:guice" }
+guice7Bom = { module = "com.google.inject:guice-bom", version = "7.0.0" }
+guiceBom = { module = "com.google.inject:guice-bom", version = "6.0.0" }
+guiceTestLib = { module = "com.google.inject.extensions:guice-testlib" }
+hibernate5Core = { module = "org.hibernate:hibernate-core", version = "5.6.15.Final" }
+hibernateJpaApi = { module = "javax.persistence:javax.persistence-api", version = "2.2" }
+hikariCp = { module = "com.zaxxer:HikariCP", version = "4.0.3" }
+jooq = { module = "org.jooq:jooq", version = "3.19.18" }
+junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junitParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+junitPioneer = { module = "org.junit-pioneer:junit-pioneer", version = "2.3.0" }
+
+misk = { module = "com.squareup.misk:misk", version.ref = "misk"}
+miskBom = { module = "com.squareup.misk:misk-bom", version.ref = "misk"}
+miskActions = { module = "com.squareup.misk:misk-actions", version.ref = "misk"}
+miskDashboard = { module = "com.squareup.misk:misk-dashboard", version.ref = "misk"}
+miskService = { module = "com.squareup.misk:misk-service", version.ref = "misk"}
+miskJooq = { module = "com.squareup.misk:misk-jooq", version.ref = "misk"}
+miskJdbc = { module = "com.squareup.misk:misk-jdbc", version.ref = "misk"}
+miskInject = { module = "com.squareup.misk:misk-inject", version.ref = "misk"}
+miskGrpcReflect = { module = "com.squareup.misk:misk-grpc-reflect", version.ref = "misk"}
+miskCore = { module = "com.squareup.misk:misk-core", version.ref = "misk"}
+miskAdmin = { module = "com.squareup.misk:misk-admin", version.ref = "misk"}
+miskTesting = { module = "com.squareup.misk:misk-testing", version.ref = "misk"}
+# miskWeb = { module = "com.squareup.misk:misk-web", version.ref = "misk"}
+mysql = { module = "com.mysql:mysql-connector-j", version = "8.4.0" }
+nettyBom = { module = "io.netty:netty-bom", version.ref = "netty" }
+nettyHandler = { module = "io.netty:netty-handler", version.ref = "netty" }
+
+protobufJava = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofitWire = { module = "com.squareup.retrofit2:converter-wire", version.ref = "retrofit" }
+retrofitMoshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+slf4jApi = { module = "org.slf4j:slf4j-api", version = "2.0.16" }
+slf4jSimple = { module = "org.slf4j:slf4j-simple", version = "2.0.16" }
+wireBom = { module = "com.squareup.wire:wire-bom", version.ref = "wire" }
+wireGrpcClient = { module = "com.squareup.wire:wire-grpc-client", version.ref = "wire" }
+wireMoshiAdapter = { module = "com.squareup.wire:wire-moshi-adapter", version.ref = "wire" }
+wireReflector = { module = "com.squareup.wire:wire-reflector", version.ref = "wire" }
+wireRuntime = { module = "com.squareup.wire:wire-runtime", version.ref = "wire" }
+wireSchema = { module = "com.squareup.wire:wire-schema", version.ref = "wire" }
+
+# wispConfig = { module = "app.cashapp.wisp:wisp-config", version.ref = "misk"}
+# wispDeployment = { module = "app.cashapp.wisp:wisp-deployment", version.ref = "misk"}
+wispLogging = { module = "app.cashapp.wisp:wisp-logging", version.ref = "misk"}
+# wispResourceLoader = { module = "app.cashapp.wisp:wisp-resource-loader", version.ref = "misk"}
+# wispContainersTesting = { module = "app.cashapp.wisp:wisp-containers-testing", version.ref = "misk"}
+# implementation 'io.github.oshai:kotlin-logging-jvm:7.0.3'
+kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version = "7.0.3" }
+
+[plugins]
+flyway = { id = "org.flywaydb.flyway", version.ref = "flywayPlugin" }
+jooq = { id = "nu.studer.jooq", version.ref = "jooqPlugin" }
+kotlinAllOpen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
+kotlinJpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+protobuf = { id = "com.google.protobuf", version = "0.9.4" }
+wire = { id = "com.squareup.wire", version.ref = "wire" }
+miskSchemaMigrator = { id = "com.squareup.misk.schema-migrator", version.ref = "misk" }
