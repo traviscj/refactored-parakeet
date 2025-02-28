@@ -14,8 +14,7 @@ public class FeedCursorStoreImpl implements FeedCursorStore {
     @Override
     public FeedCursor get(String feedName, int shard) {
         KvRecord feedCursor = kvStore.get("FEED_CURSOR", feedName + "::" + shard);
-        return new FeedCursor(feedName, Long.parseLong(
-                new String(feedCursor.getV())
+        return new FeedCursor(feedName, Long.parseLong(feedCursor.getV()
         ), shard, -1);
     }
 

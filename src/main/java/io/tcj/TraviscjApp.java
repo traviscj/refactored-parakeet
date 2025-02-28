@@ -28,57 +28,56 @@ import wisp.deployment.Deployment;
 import wisp.deployment.DeploymentKt;
 
 public class TraviscjApp {
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-      // want DEVELOPMENT, but then get docker db, which don't want.
-      // so use PRODUCTION, but that implies a bunch of security stuff i think?
-    Deployment deployment =
+        // want DEVELOPMENT, but then get docker db, which don't want.
+        // so use PRODUCTION, but that implies a bunch of security stuff i think?
+        Deployment deployment =
 //            DeploymentKt.getDEVELOPMENT();
-            DeploymentKt.getPRODUCTION();
-    TraviscjConfig config =
-        MiskConfig.load(
-            TraviscjConfig.class,
-            "traviscj",
-            deployment,
-            ImmutableList.of(),
-            ResourceLoader.Companion.getSYSTEM());
-    DataSourceClusterConfig dataSourceClusterConfig =
-        new DataSourceClusterConfig(config.data_source, config.data_source);
-    JooqModule jooqModule =
-        new JooqModule(
-            kotlin.jvm.JvmClassMappingKt.getKotlinClass(TraviscjDb.class),
-            dataSourceClusterConfig,
-            "jooq",
-            RealDatabasePool.INSTANCE,
-            kotlin.jvm.JvmClassMappingKt.getKotlinClass(TraviscjReadyOnlyDb.class),
-            new JooqTimestampRecordListenerOptions(true, "created_at", "updated_at"),
-            true,
-            (configuration -> {
-              return Unit.INSTANCE;
-            }));
+                DeploymentKt.getPRODUCTION();
+        TraviscjConfig config =
+                MiskConfig.load(
+                        TraviscjConfig.class,
+                        "traviscj",
+                        deployment,
+                        ImmutableList.of(),
+                        ResourceLoader.Companion.getSYSTEM());
+        DataSourceClusterConfig dataSourceClusterConfig =
+                new DataSourceClusterConfig(config.data_source, config.data_source);
+        JooqModule jooqModule =
+                new JooqModule(
+                        kotlin.jvm.JvmClassMappingKt.getKotlinClass(TraviscjDb.class),
+                        dataSourceClusterConfig,
+                        "jooq",
+                        RealDatabasePool.INSTANCE,
+                        kotlin.jvm.JvmClassMappingKt.getKotlinClass(TraviscjReadyOnlyDb.class),
+                        new JooqTimestampRecordListenerOptions(true, "created_at", "updated_at"),
+                        true,
+                        (configuration -> {
+                            return Unit.INSTANCE;
+                        }));
 
 
-    new MiskApplication(
-            new MiskRealServiceModule(),
-            new MiskWebModule(config.web),
-            new TraviscjAppModule(),
-            new ConfigModule<>(TraviscjConfig.class, "traviscj", config),
-            new DeploymentModule(deployment),
-            jooqModule,
-            new AbstractModule() {
-              @Override
-              protected void configure() {
-                  install(new AdminDashboardTestingModule());
-                Multibinder.newSetBinder(binder(), MiskCallerAuthenticator.class)
-                    .addBinding()
-                    .to(FakeCallerAuthenticator.class);
+        new MiskApplication(
+                new MiskRealServiceModule(),
+                new MiskWebModule(config.web),
+                new TraviscjAppModule(),
+                new ConfigModule<>(TraviscjConfig.class, "traviscj", config),
+                new DeploymentModule(deployment),
+                jooqModule,
+                new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        install(new AdminDashboardTestingModule());
+                        Multibinder.newSetBinder(binder(), MiskCallerAuthenticator.class)
+                                .addBinding()
+                                .to(FakeCallerAuthenticator.class);
 
-                bind(Key.get(MiskCaller.class, DevelopmentOnly.class))
-                    .toInstance(new MiskCaller(null, "traviscj", ImmutableSet.of("admin_access")));
-              }
-            }
-//            new AdminDashboardModule(true)
-            )
-        .run(args);
-  }
+                        bind(Key.get(MiskCaller.class, DevelopmentOnly.class))
+                                .toInstance(new MiskCaller(null, "traviscj", ImmutableSet.of("admin_access")));
+                    }
+                }
+        )
+                .run(args);
+    }
 }

@@ -121,15 +121,15 @@ public class KvRecord extends UpdatableRecordImpl<KvRecord> {
     /**
      * Setter for <code>kv.v</code>.
      */
-    public void setV(byte[] value) {
+    public void setV(String value) {
         set(7, value);
     }
 
     /**
      * Getter for <code>kv.v</code>.
      */
-    public byte[] getV() {
-        return (byte[]) get(7);
+    public String getV() {
+        return (String) get(7);
     }
 
     // -------------------------------------------------------------------------
@@ -155,7 +155,7 @@ public class KvRecord extends UpdatableRecordImpl<KvRecord> {
     /**
      * Create a detached, initialised KvRecord
      */
-    public KvRecord(Long id, LocalDateTime createdAt, LocalDateTime updatedAt, Long feedSyncId, Integer shard, String ns, String k, byte[] v) {
+    public KvRecord(Long id, LocalDateTime createdAt, LocalDateTime updatedAt, Long feedSyncId, Integer shard, String ns, String k, String v) {
         super(Kv.KV);
 
         setId(id);

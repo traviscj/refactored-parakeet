@@ -93,7 +93,7 @@ public class Kv extends TableImpl<KvRecord> {
     /**
      * The column <code>kv.v</code>.
      */
-    public final TableField<KvRecord, byte[]> V = createField(DSL.name("v"), SQLDataType.BLOB.nullable(false), this, "");
+    public final TableField<KvRecord, String> V = createField(DSL.name("v"), SQLDataType.CLOB, this, "");
 
     private Kv(Name alias, Table<KvRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

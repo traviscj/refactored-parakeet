@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.internal.builtins.StandardNames.FqNames.deprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.host
 
@@ -120,17 +121,9 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-//tasks.withType<ShadowJar> {
-//    zip64 = true
-//    mergeServiceFiles()
-//    archiveBaseName.set("traviscj-shadowed")
-//    archiveClassifier.set("")
-//    archiveVersion.set("")
-//}
-
 val dbConfig = mapOf(
     "url" to "jdbc:mysql://localhost:3306/",
-    "schema" to "codegen",
+    "schema" to "misk_jooq_test_codegen",
     "user" to "root",
     "password" to ""
 )
@@ -171,12 +164,7 @@ jooq {
         create("main") {
             generateSchemaSourceOnCompilation.set(true)
             jooqConfiguration.apply {
-//            generationTool {
                 jdbc.apply {
-//                    driver = "org.postgresql.Driver"
-//                    url = "jdbc:postgresql://localhost:5432/traviscj_codegen"
-//                    user = "root"
-//                    password = ""
                     driver = "com.mysql.cj.jdbc.Driver"
                     url = "jdbc:mysql://localhost:3306/misk_jooq_test_codegen"
                     user = "root"
@@ -187,8 +175,7 @@ jooq {
                     name = "org.jooq.codegen.DefaultGenerator"
                     database.apply {
                         name = "org.jooq.meta.mysql.MySQLDatabase"
-                        inputSchema = "public"
-//                        outputSchema = "tcj_kv"
+                        inputSchema = "misk_jooq_test_codegen"
                         isOutputSchemaToDefault = true
                         includes = ".*"
                         excludes = "(.*?FLYWAY_SCHEMA_HISTORY)|(.*?schema_version)"
@@ -216,6 +203,5 @@ tasks.withType<nu.studer.gradle.jooq.JooqGenerate>().configureEach {
     inputs.files(fileTree("src/main/resources/db/migration"))
         .withPropertyName("migrations")
         .withPathSensitivity(PathSensitivity.RELATIVE)
-    // interesting, this is opposite of https://github.com/cashapp/misk/blob/master/misk-jooq/build.gradle.kts
     allInputsDeclared.set(true)
 }

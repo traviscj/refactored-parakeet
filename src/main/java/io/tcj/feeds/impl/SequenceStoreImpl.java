@@ -13,7 +13,7 @@ public class SequenceStoreImpl implements SequenceStore {
     @Override
     public Sequence lookup(String sequenceName) {
         KvRecord feedSeq = kvStore.get("FEED_SEQ", sequenceName);
-        return new Sequence(sequenceName, Long.parseLong(new String(feedSeq.getV())));
+        return new Sequence(sequenceName, Long.parseLong(feedSeq.getV()));
     }
 
     @Override
