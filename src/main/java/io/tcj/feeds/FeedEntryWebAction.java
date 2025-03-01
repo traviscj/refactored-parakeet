@@ -24,12 +24,13 @@ public class FeedEntryWebAction implements WebAction {
   @Post(pathPattern = "/_api/feeds/fetch")
   @RequestContentType(MediaTypes.APPLICATION_JSON)
   @ResponseContentType(MediaTypes.APPLICATION_JSON)
-  public io.tcj.protos.feeds.FeedFetchResponse fetch(@RequestBody FeedFetchRequest req) {
+  public FeedFetchResponse<Kv> fetch(@RequestBody FeedFetchRequest req) {
     FeedFetchResponse<Kv> fetch = feedEntryFetcher.fetch(req);
-      return new io.tcj.protos.feeds.FeedFetchResponse.Builder()
-              .next_after(fetch.next_after)
-              .entries(fetch.entries().stream().map(Kv::encodeByteString).collect(Collectors.toList()))
-              .build();
+    io.tcj.protos.feeds.FeedFetchResponse proto = new io.tcj.protos.feeds.FeedFetchResponse.Builder()
+            .next_after(fetch.next_after)
+            .entries(fetch.entries().stream().map(Kv::encodeByteString).collect(Collectors.toList()))
+            .build();
+    return fetch;
   }
 
   public record FeedFetchRequest(
