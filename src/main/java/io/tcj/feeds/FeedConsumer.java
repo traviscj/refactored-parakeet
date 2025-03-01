@@ -3,10 +3,10 @@ package io.tcj.feeds;
 import io.tcj.feeds.FeedEntryWebAction.FeedFetchRequest;
 import io.tcj.feeds.FeedEntryWebAction.FeedFetchResponse;
 import io.tcj.feeds.api.FeedCursorStore;
-import io.tcj.feeds.api.FeedEntry;
 import io.tcj.feeds.api.FeedListener;
 import io.tcj.feeds.model.FeedConsumerDef;
 import io.tcj.feeds.model.FeedCursor;
+import io.tcj.protos.kv.Kv;
 
 import javax.inject.Inject;
 
@@ -29,21 +29,20 @@ import javax.inject.Inject;
  *   <li>pass that transaction into the FeedListener.</li>
  * </ul>
  */
-public class FeedConsumer<Rec extends FeedEntry<Rec>> {
+public class FeedConsumer {
   @Inject FeedCursorStore feedCursorStore;
-  @Inject
-  FeedConsumerDef feedConsumerDef;
-  @Inject FeedListener<Rec> feedListener;
-  @Inject FeedEntryFetcher<Rec> feedEntryFetcher;
+  @Inject FeedConsumerDef feedConsumerDef;
+  @Inject FeedListener feedListener;
+  @Inject FeedEntryFetcher feedEntryFetcher;
 
   public void processBatch() {
     FeedCursor feedCursor = feedCursorStore.get(feedConsumerDef.feedName(),
         feedConsumerDef.shard());
 
     FeedFetchRequest req = new FeedFetchRequest(feedConsumerDef.feedName(),
-        Long.toString(feedCursor.feedSyncId()), feedConsumerDef.limit(), feedConsumerDef.shard());
+        Long.toString(feedCursor.feedSyncId()), feedConsumerDef.limit(), feedConsumerDef.shard(), feedConsumerDef.numShards());
 
-    FeedFetchResponse<Rec> fetchResponse = feedEntryFetcher.fetch(req);
+    FeedFetchResponse<Kv> fetchResponse = feedEntryFetcher.fetch(req);
 
     feedListener.process(fetchResponse.entries());
 

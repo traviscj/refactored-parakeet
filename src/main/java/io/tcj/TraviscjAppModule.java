@@ -1,6 +1,7 @@
 package io.tcj;
 
 import com.google.inject.AbstractModule;
+import io.tcj.feeds.impl.KvFeedModule;
 import io.tcj.keyvalue.KvListRpc;
 import io.tcj.keyvalue.KvPutRpc;
 import io.tcj.mortgage.MortgageCalcRpc;
@@ -14,6 +15,7 @@ public class TraviscjAppModule extends AbstractModule {
     install(WebActionModule.create(KvListRpc.class));
     install(WebActionModule.create(KvPutRpc.class));
 
+    install(new KvFeedModule());
 //    install(WebActionModule.create())
   }
 }

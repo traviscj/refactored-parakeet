@@ -13,7 +13,15 @@ public class FeedCursorStoreImpl implements FeedCursorStore {
 
     @Override
     public FeedCursor get(String feedName, int shard) {
-        KvRecord feedCursor = kvStore.get("FEED_CURSOR", feedName + "::" + shard);
+        // TODO: need to respect FeedConsumerDef
+        KvRecord feedCursor = kvStore.getOptional("FEED_CURSOR", feedName + "::" + shard)
+                .orElseGet(() -> {
+                    KvRecord kvRecord = new KvRecord();
+                    kvRecord.setNs("FEED_CURSOR");
+                    kvRecord.setK(feedName + "::" + shard);
+                    kvRecord.setV("0");
+                    return kvRecord;
+                });
         return new FeedCursor(feedName, Long.parseLong(feedCursor.getV()
         ), shard, -1);
     }

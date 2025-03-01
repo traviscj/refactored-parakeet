@@ -1,13 +1,16 @@
 package io.tcj.feeds.api;
 
-import io.tcj.feeds.model.FeedCursor;
+import org.jooq.UpdatableRecord;
 
 /**
- * envelope for a feed-published record, along with its associated {@link FeedCursor}.
+ * envelope for a feed-published record.
  *
  * Rec: the contents of the envelope -- the record your app feed publishes.
  */
-public interface FeedEntry<Rec> {
-  FeedCursor feedCursor();
-  Rec record();
+public interface FeedEntry<Rec extends UpdatableRecord<Rec>> {
+  UpdatableRecord<Rec> record();
+
+  long feedSyncId();
+
+  FeedEntry<Rec> setFeedSyncId(long feedSyncId);
 }

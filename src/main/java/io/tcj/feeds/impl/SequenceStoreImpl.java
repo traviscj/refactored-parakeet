@@ -12,12 +12,20 @@ public class SequenceStoreImpl implements SequenceStore {
 
     @Override
     public Sequence lookup(String sequenceName) {
-        KvRecord feedSeq = kvStore.get("FEED_SEQ", sequenceName);
+        KvRecord feedSeq = kvStore.getOptional("FEED_SEQ", sequenceName)
+                .orElseGet(() -> {
+                    KvRecord kvRecord = new KvRecord();
+                    kvRecord.setNs("FEED_SEQ");
+                    kvRecord.setK(sequenceName);
+                    kvRecord.setV("0");
+                    return kvRecord;
+
+                });
         return new Sequence(sequenceName, Long.parseLong(feedSeq.getV()));
     }
 
     @Override
     public void put(String sequenceName, long nextSequenceValue) {
-        kvStore.put("FEED_SEQ", sequenceName, Long.toString(nextSequenceValue));
+        kvStore.putOrUpdate("FEED_SEQ", sequenceName, Long.toString(nextSequenceValue));
     }
 }
