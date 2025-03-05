@@ -1,4 +1,21 @@
 
+```
+$ brew install mysql
+$ brew services start mysql
+$ mysql -u root
+mysql> create database traviscj_localdev;
+Query OK, 1 row affected (0.01 sec)
+mysql> use traviscj_localdev ;
+Database changed
+mysql> CREATE TABLE `schema_version` (
+    ->   `version` varchar(50) NOT NULL,
+    ->   `installed_by` varchar(30) DEFAULT NULL,
+    ->   PRIMARY KEY (`version`)
+    -> ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+    -> ;
+Query OK, 0 rows affected (0.01 sec)
+```
+
 ```sql
 create user root with superuser;
 ```
