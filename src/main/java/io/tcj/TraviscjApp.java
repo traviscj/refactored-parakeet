@@ -19,13 +19,17 @@ import misk.jdbc.RealDatabasePool;
 import misk.jooq.JooqModule;
 import misk.jooq.listeners.JooqTimestampRecordListenerOptions;
 import misk.resources.ResourceLoader;
+import misk.security.authz.AccessAnnotationEntry;
 import misk.security.authz.DevelopmentOnly;
 import misk.security.authz.FakeCallerAuthenticator;
 import misk.security.authz.MiskCallerAuthenticator;
 import misk.web.MiskWebModule;
 import misk.web.dashboard.AdminDashboardTestingModule;
+import misk.web.metadata.all.AllMetadataAccess;
 import wisp.deployment.Deployment;
 import wisp.deployment.DeploymentKt;
+
+import java.util.List;
 
 public class TraviscjApp {
     public static void main(String[] args) {
@@ -53,6 +57,7 @@ public class TraviscjApp {
                         kotlin.jvm.JvmClassMappingKt.getKotlinClass(TraviscjReadyOnlyDb.class),
                         new JooqTimestampRecordListenerOptions(true, "created_at", "updated_at"),
                         true,
+                        true,
                         (configuration -> {
                             return Unit.INSTANCE;
                         }));
@@ -75,6 +80,14 @@ public class TraviscjApp {
 
                         bind(Key.get(MiskCaller.class, DevelopmentOnly.class))
                                 .toInstance(new MiskCaller(null, "traviscj", ImmutableSet.of("admin_access")));
+
+                        Multibinder.newSetBinder(binder(), AccessAnnotationEntry.class)
+                                .addBinding()
+                                .toInstance(new AccessAnnotationEntry(
+                                        kotlin.jvm.JvmClassMappingKt.getKotlinClass(AllMetadataAccess.class),
+                                        List.of(),
+                                        List.of("admin_access")
+                                ));
                     }
                 }
         )

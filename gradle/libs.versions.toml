@@ -20,7 +20,7 @@ kotlin = "2.1.10"
 kotlinBinaryCompatibilityPlugin = "0.17.0"
 mavenPublish = "0.28.0"
 micrometer = "1.12.13"
-misk = "2025.02.24.122634-f35741f"
+misk = "2025.11.26.155736-9435a31"
 netty = "4.1.118.Final"
 okHttp = "5.0.0-alpha.14"
 protobuf = "3.25.6"
@@ -63,7 +63,8 @@ junitPioneer = { module = "org.junit-pioneer:junit-pioneer", version = "2.3.0" }
 misk = { module = "com.squareup.misk:misk", version.ref = "misk"}
 miskBom = { module = "com.squareup.misk:misk-bom", version.ref = "misk"}
 miskActions = { module = "com.squareup.misk:misk-actions", version.ref = "misk"}
-miskDashboard = { module = "com.squareup.misk:misk-dashboard", version.ref = "misk"}
+miskDashboard = { module = "com.squareup.misk:misk-dashboard", version.ref = "misk" }
+miskSchemaMigrator = { module = "com.squareup.misk:misk-schema-migrator", version.ref = "misk" }
 miskService = { module = "com.squareup.misk:misk-service", version.ref = "misk"}
 miskJooq = { module = "com.squareup.misk:misk-jooq", version.ref = "misk"}
 miskJdbc = { module = "com.squareup.misk:misk-jdbc", version.ref = "misk"}
@@ -106,4 +107,9 @@ kotlinJpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 protobuf = { id = "com.google.protobuf", version = "0.9.4" }
 wire = { id = "com.squareup.wire", version.ref = "wire" }
-miskSchemaMigrator = { id = "com.squareup.misk.schema-migrator", version.ref = "misk" }
+#miskSchemaMigrator = { id = "com.squareup.misk.schema-migrator", version.ref = "misk" }
+# Use a strict version here so we don't get into an infinite loop of version updates. This version can be bumped
+# periodically whenever there are nontrivial changes to the schema-migrator plugin behaviour. Having this here is
+# not great but it allows us to use the schema-migrator gradle plugin (which is published from this codebase)
+# within the codebase itself without resorting to complex buildSrc/includeBuild trickery.
+miskSchemaMigrator = { id = "com.squareup.misk.schema-migrator", version = { strictly = "2025.07.31.213947-514912f" } }

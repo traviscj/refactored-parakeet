@@ -23,7 +23,17 @@ message ListKvResp {
   repeated Kv kv = 1;
 }
 
+message ListNamespaceReq {
+  optional string ns_prefix = 1;
+  optional int32 limit = 2 [default = 50];
+
+}
+message ListNamespaceResp {
+  repeated string ns = 1;
+}
+
 service KvService {
   rpc List (ListKvReq) returns (ListKvResp);
   rpc Put (Kv) returns (Kv);
+  rpc ListNamespace (ListNamespaceReq) returns (ListNamespaceResp);
 }

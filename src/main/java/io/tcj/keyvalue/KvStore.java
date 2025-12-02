@@ -6,12 +6,14 @@ import io.tcj.jooq.tables.records.KvRecord;
 import misk.jooq.JooqSession;
 import misk.jooq.JooqTransacter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.SelectConditionStep;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static io.tcj.jooq.tables.Kv.KV;
 
@@ -51,6 +53,14 @@ public class KvStore {
                 new JooqTransacter.TransacterOptions(),
                 jooqSession -> new KvSession(jooqSession).kvRecords(ns, kPrefix, limit));
     }
+
+    public List<String> ns(String nsPrefix, Integer limit) {
+        return jooqTransacter.transaction(
+                new JooqTransacter.TransacterOptions(),
+                jooqSession -> new KvSession(jooqSession).ns(nsPrefix, limit));
+
+    }
+
     public static class KvSession {
         private final JooqSession jooqSession;
         public KvSession(JooqSession jooqSession) {
@@ -81,6 +91,18 @@ public class KvStore {
                 kvRecords = kvRecords.and(KV.K.startsWith(kPrefix));
             }
             return kvRecords.limit(limit).fetch();
+        }
+
+        public List<String> ns(@Nullable String nsPrefix, Integer limit) {
+            @NotNull
+            SelectConditionStep<KvRecord> kvRecords = jooqSession.getCtx().selectFrom(KV).where();
+            if (!Strings.isNullOrEmpty(nsPrefix)) {
+                kvRecords = kvRecords.and(KV.NS.startsWith(nsPrefix));
+            }
+            return kvRecords.limit(limit).fetch().stream()
+                    .map(KvRecord::getNs)
+                    .distinct()
+                    .collect(Collectors.toList());
         }
     }
 

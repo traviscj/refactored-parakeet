@@ -35,8 +35,6 @@ version = "1.0-SNAPSHOT"
 repositories {
     gradlePluginPortal()
     mavenCentral()
-//    maven { setUrl("https://repo1.maven.org/maven2/") }
-//    maven { setUrl("https://mvnrepository.com/repos/central") }
     maven { setUrl("https://s01.oss.sonatype.org/service/local/repositories/comsquareup-1071/content") }
 }
 
@@ -115,6 +113,12 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_23
     targetCompatibility = JavaVersion.VERSION_23
+}
+
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
 }
 
 tasks.withType<Test> {
