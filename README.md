@@ -15,6 +15,24 @@ Java + Kotlin both target 21. DB defaults to `localhost:3307` (the kv3 docker My
 container. The fastest local DB is `cd ~/kv3 && docker-compose up -d` — the manual
 MySQL setup below is the from-scratch alternative.
 
+# smoke test
+
+Once `./gradlew run` is serving on `:1337`, hit the endpoints directly:
+
+```sh
+curl http://localhost:1337/io.tcj.KvService/List -d '{
+    "ns": "MORTGAGES",
+    "k_prefix": "",
+    "limit": 20
+}' -H 'Content-type: application/json' -H 'Accept: application/json' | jq .
+
+curl http://localhost:1337/io.tcj.MortgageService/Calc -d '{
+    "principal": 510400,
+    "apr": 2.625,
+    "term": 30
+}' -H 'Content-type: application/json' -H 'Accept: application/json' | jq .
+```
+
 # mysql (manual / from scratch)
 
 ```
