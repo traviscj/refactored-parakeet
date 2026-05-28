@@ -2,6 +2,7 @@ package io.tcj.feeds.module;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.MapBinder;
+import io.tcj.feeds.DescribeFeedsWebAction;
 import io.tcj.feeds.ExposedFeed;
 import io.tcj.feeds.FeedSourceFetchRpc;
 import misk.web.WebActionModule;
@@ -17,5 +18,6 @@ public final class FeedSourceModule extends AbstractModule {
         // ensure the registry exists even with zero feeds registered
         MapBinder.newMapBinder(binder(), String.class, ExposedFeed.class);
         install(WebActionModule.create(FeedSourceFetchRpc.class));
+        install(WebActionModule.create(DescribeFeedsWebAction.class));
     }
 }

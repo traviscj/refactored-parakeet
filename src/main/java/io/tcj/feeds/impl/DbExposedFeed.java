@@ -28,6 +28,11 @@ public class DbExposedFeed<Rec extends UpdatableRecord<Rec>, Dto extends Message
     DbFeedFetcher<Rec, Dto> dbFeedFetcher;
 
     @Override
+    public Class<?> recordType() {
+        return dbFeedFetcher.recordType();
+    }
+
+    @Override
     public FeedFetchResponse fetch(FeedFetchRequest request) {
         long after = request.after != null ? Long.parseLong(request.after) : 0L;
         int limit = request.limit != null ? request.limit : FeedFetchRequest.DEFAULT_LIMIT;

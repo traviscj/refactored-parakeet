@@ -15,4 +15,7 @@ import io.tcj.protos.feeds.FeedFetchResponse;
  */
 public interface ExposedFeed {
     FeedFetchResponse fetch(FeedFetchRequest request);
+
+    /** @return the jOOQ record type backing this feed (for topology introspection). */
+    Class<?> recordType();
 }
