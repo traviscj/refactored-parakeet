@@ -1,21 +1,21 @@
 package io.tcj.feeds;
 
 import com.squareup.wire.Message;
-import io.tcj.feeds.FeedEntryWebAction.FeedFetchRequest;
-import io.tcj.feeds.FeedEntryWebAction.FeedFetchResponse;
 import io.tcj.feeds.api.DbFeedFetcher;
 import io.tcj.feeds.model.FeedCursor;
+import io.tcj.feeds.model.FetchRequest;
+import io.tcj.feeds.model.FetchResult;
 import jakarta.inject.Inject;
 import org.jooq.UpdatableRecord;
 
 /**
- * an internal version of the web action, operating on actual DTO objects.
+ * In-process typed fetch: turns a {@link FetchRequest} into a {@link FeedCursor} and
+ * reads the next batch of DTOs from the local {@link DbFeedFetcher}.
  *
- * (not totally convinced we need this anymore?)
- *
- * ok, this _is_ required, and we shouldn't use Rec extends UpdatableRecord&lt;Rec&gt;.
- *
- * Rather, this _should_ be a DTO - a data transfer object, like a proto!
+ * <p>This is the co-located path used by a {@code FeedConsumer} in the same service
+ * as the producer. The over-the-wire equivalent is the generic
+ * {@code FeedSourceService.Fetch} endpoint (see {@link io.tcj.feeds.FeedSourceFetchRpc}
+ * and {@link io.tcj.feeds.ExposedFeed}).
  *
  * @param <Rec> the jOOQ record type backing the feed.
  * @param <Dto> the wire message type the feed is exposed as.
@@ -24,9 +24,9 @@ public class FeedEntryFetcher<Rec extends UpdatableRecord<Rec>, Dto extends Mess
   @Inject
   DbFeedFetcher<Rec, Dto> dbFeedFetcher;
 
-  public FeedFetchResponse<Dto> fetch(FeedFetchRequest req) {
+  public FetchResult<Dto> fetch(FetchRequest req) {
     return dbFeedFetcher.fetchPublished(
-            new FeedCursor(req.feed_name(), Long.parseLong(req.after()), req.shard(), req.num_shards()),
+            new FeedCursor(req.feedName(), Long.parseLong(req.after()), req.shard(), req.numShards()),
             req.limit()
     );
   }
