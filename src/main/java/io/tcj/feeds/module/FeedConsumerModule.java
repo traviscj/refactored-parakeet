@@ -52,12 +52,14 @@ public final class FeedConsumerModule<Rec extends UpdatableRecord<Rec>, Dto exte
     @Override
     protected void configure() {
         Key<FeedListener<Dto>> listenerKey = FeedKeys.parameterized(FeedListener.class, dtoClass);
-        Key<FeedEntryFetcher<Rec, Dto>> fetcherKey = FeedKeys.parameterized(FeedEntryFetcher.class, recordClass, dtoClass);
         Key<FeedConsumer<Rec, Dto>> consumerKey = FeedKeys.parameterized(FeedConsumer.class, recordClass, dtoClass);
 
         bind(FeedConsumerDef.class).toInstance(consumerDef);
         bind(listenerKey).to(listenerClass);
-        bind(fetcherKey); // local in-process fetch; see TODO(remote)
+        // FeedEntryFetcher<Rec,Dto> is INHERITED from the parent injector (bound by the
+        // in-process ExposedFeedModule) -- a PrivateModule may not re-bind an inherited key.
+        // TODO(remote): a consumer of a *remote* feed has no local exposed fetcher and would
+        // bind an HTTP-backed FeedEntryFetcher here instead.
         bind(consumerKey);
 
         expose(consumerKey);
