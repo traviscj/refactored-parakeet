@@ -2,3 +2,8 @@ build
 .idea
 .gradle
 .kotlin
+
+# kv_service.py filesystem backend (default KV_DATA_DIR) + python cruft
+kv-data
+__pycache__
+*.pyc
