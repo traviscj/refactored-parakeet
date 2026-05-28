@@ -7,3 +7,6 @@ build
 kv-data
 __pycache__
 *.pyc
+
+# claude code local state (worktrees, settings)
+.claude/
