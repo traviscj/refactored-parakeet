@@ -1,12 +1,13 @@
 package io.tcj.feeds;
 
+import com.squareup.wire.Message;
 import io.tcj.feeds.FeedEntryWebAction.FeedFetchRequest;
 import io.tcj.feeds.FeedEntryWebAction.FeedFetchResponse;
 import io.tcj.feeds.api.FeedCursorStore;
 import io.tcj.feeds.api.FeedListener;
 import io.tcj.feeds.model.FeedConsumerDef;
 import io.tcj.feeds.model.FeedCursor;
-import io.tcj.protos.kv.Kv;
+import org.jooq.UpdatableRecord;
 
 import javax.inject.Inject;
 
@@ -28,12 +29,15 @@ import javax.inject.Inject;
  *   <li>wrap {@link FeedCursorStore} calls in a single transaction.</li>
  *   <li>pass that transaction into the FeedListener.</li>
  * </ul>
+ *
+ * @param <Rec> the jOOQ record type backing the feed.
+ * @param <Dto> the wire message type the feed is consumed as.
  */
-public class FeedConsumer {
+public class FeedConsumer<Rec extends UpdatableRecord<Rec>, Dto extends Message<?, ?>> {
   @Inject FeedCursorStore feedCursorStore;
   @Inject FeedConsumerDef feedConsumerDef;
-  @Inject FeedListener feedListener;
-  @Inject FeedEntryFetcher feedEntryFetcher;
+  @Inject FeedListener<Dto> feedListener;
+  @Inject FeedEntryFetcher<Rec, Dto> feedEntryFetcher;
 
   public void processBatch() {
     FeedCursor feedCursor = feedCursorStore.get(feedConsumerDef.feedName(),
@@ -42,7 +46,7 @@ public class FeedConsumer {
     FeedFetchRequest req = new FeedFetchRequest(feedConsumerDef.feedName(),
         Long.toString(feedCursor.feedSyncId()), feedConsumerDef.limit(), feedConsumerDef.shard(), feedConsumerDef.numShards());
 
-    FeedFetchResponse<Kv> fetchResponse = feedEntryFetcher.fetch(req);
+    FeedFetchResponse<Dto> fetchResponse = feedEntryFetcher.fetch(req);
 
     feedListener.process(fetchResponse.entries());
 

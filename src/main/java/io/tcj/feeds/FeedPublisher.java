@@ -1,5 +1,6 @@
 package io.tcj.feeds;
 
+import com.squareup.wire.Message;
 import io.tcj.feeds.api.DbFeedFetcher;
 import io.tcj.feeds.api.FeedEntry;
 import io.tcj.feeds.api.SequenceStore;
@@ -27,12 +28,14 @@ import static java.util.stream.Collectors.toList;
  *   <li>assigning monotonically increasing (strictly) feed_sync_id to each record in the batch</li>
  *   <li>Saving our new {@link Sequence} value.</li>
  * </ul>
+ *
+ * @param <Rec> the jOOQ record type of the feed-published table.
+ * @param <Dto> the wire message type the feed is exposed as.
  */
-
-public class FeedPublisher<Rec extends UpdatableRecord<Rec>>  {
+public class FeedPublisher<Rec extends UpdatableRecord<Rec>, Dto extends Message<?, ?>>  {
   @Inject SequenceStore sequenceStore;
   @Inject PublishedFeedDef publishedFeedDef;
-  @Inject DbFeedFetcher<Rec, Kv> dbFeedFetcher;
+  @Inject DbFeedFetcher<Rec, Dto> dbFeedFetcher;
 
   public void processBatch() {
     Sequence sequence = sequenceStore.lookup(publishedFeedDef.name());
@@ -50,7 +53,7 @@ public class FeedPublisher<Rec extends UpdatableRecord<Rec>>  {
 
 
   public static class FeedPublishWebAction implements WebAction {
-    @Inject FeedPublisher<KvRecord> publisher;
+    @Inject FeedPublisher<KvRecord, Kv> publisher;
 
     @Post(pathPattern = "/_api/feeds/publish")
     public String run() {

@@ -1,6 +1,7 @@
 package io.tcj.feeds;
 
 import com.squareup.wire.Message;
+import io.tcj.jooq.tables.records.KvRecord;
 import io.tcj.protos.kv.Kv;
 import misk.web.Post;
 import misk.web.RequestBody;
@@ -11,7 +12,6 @@ import misk.web.mediatype.MediaTypes;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * this is how a feed producer exposes it's published entries to remote feed consumers.
@@ -19,18 +19,13 @@ import java.util.stream.Collectors;
  *
  */
 public class FeedEntryWebAction implements WebAction {
-  @Inject FeedEntryFetcher feedEntryFetcher;
+  @Inject FeedEntryFetcher<KvRecord, Kv> feedEntryFetcher;
 
   @Post(pathPattern = "/_api/feeds/fetch")
   @RequestContentType(MediaTypes.APPLICATION_JSON)
   @ResponseContentType(MediaTypes.APPLICATION_JSON)
   public FeedFetchResponse<Kv> fetch(@RequestBody FeedFetchRequest req) {
-    FeedFetchResponse<Kv> fetch = feedEntryFetcher.fetch(req);
-    io.tcj.protos.feeds.FeedFetchResponse proto = new io.tcj.protos.feeds.FeedFetchResponse.Builder()
-            .next_after(fetch.next_after)
-            .entries(fetch.entries().stream().map(Kv::encodeByteString).collect(Collectors.toList()))
-            .build();
-    return fetch;
+    return feedEntryFetcher.fetch(req);
   }
 
   public record FeedFetchRequest(
