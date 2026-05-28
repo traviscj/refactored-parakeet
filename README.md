@@ -1,3 +1,21 @@
+# build / run
+
+Toolchain is pinned with [Hermit](https://cashapp.github.io/hermit/) (`bin/` =
+corretto@21). Activate it first, or `./gradlew` runs under your ambient `java`
+(Gradle 8.13 rejects Java 25):
+
+```sh
+. bin/activate-hermit
+./gradlew run          # serves :1337; needs MySQL up (see below / kv3 docker-compose)
+./gradlew installDist  # builds build/install/iotcj for the kv3 `full` compose profile
+```
+
+Java + Kotlin both target 21. DB defaults to `localhost:3307` (the kv3 docker MySQL);
+`docker/traviscj-production.yaml` overrides that to the `mysql` service when run as a
+container. The fastest local DB is `cd ~/kv3 && docker-compose up -d` — the manual
+MySQL setup below is the from-scratch alternative.
+
+# mysql (manual / from scratch)
 
 ```
 $ brew install mysql

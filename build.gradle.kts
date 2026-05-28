@@ -111,13 +111,13 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_23
-    targetCompatibility = JavaVersion.VERSION_23
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     }
 }
 
@@ -126,7 +126,7 @@ tasks.withType<Test> {
 }
 
 val dbConfig = mapOf(
-    "url" to "jdbc:mysql://localhost:3306/",
+    "url" to "jdbc:mysql://localhost:3307/",
     "schema" to "misk_jooq_test_codegen",
     "user" to "root",
     "password" to ""
@@ -135,7 +135,7 @@ val dbConfig = mapOf(
 miskSchemaMigrator {
     database = dbConfig["schema"]
 //    host = "localhost" // optional, defaults to localhost
-//    port = 3306 // optional, defaults to 3306
+    port = 3307 // docker-compose maps host 3307 -> container 3306
     username = dbConfig["user"]
     password = dbConfig["password"]
     migrationsDir = layout.projectDirectory.dir("src/main/resources/db/migration")
@@ -170,7 +170,7 @@ jooq {
             jooqConfiguration.apply {
                 jdbc.apply {
                     driver = "com.mysql.cj.jdbc.Driver"
-                    url = "jdbc:mysql://localhost:3306/misk_jooq_test_codegen"
+                    url = "jdbc:mysql://localhost:3307/misk_jooq_test_codegen"
                     user = "root"
                     password = ""
 

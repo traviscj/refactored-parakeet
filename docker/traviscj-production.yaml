@@ -1,0 +1,14 @@
+# Container-only config overlay.
+#
+# This file is deliberately NOT in src/main/resources — it's copied onto the
+# classpath only by the Dockerfile. Misk loads traviscj-common.yaml first, then
+# overlays the deployment-specific file (PRODUCTION -> traviscj-production.yaml),
+# so this overrides just the DB endpoint when iotcj runs as a container, while a
+# host `gradle run` (which never sees this file) keeps using localhost:3307 from
+# traviscj-common.yaml.
+#
+# Inside the compose network the database is the `mysql` service on its internal
+# port 3306 (the host's 3307 mapping doesn't apply container-to-container).
+data_source:
+  host: mysql
+  port: 3306

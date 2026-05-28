@@ -1,0 +1,10 @@
+# Only the prebuilt distribution libs and the docker config are needed in context.
+*
+!build
+build/*
+!build/install
+build/install/*
+!build/install/iotcj
+build/install/iotcj/*
+!build/install/iotcj/lib
+!docker
