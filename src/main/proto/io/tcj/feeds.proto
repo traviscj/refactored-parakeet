@@ -5,7 +5,81 @@ package io.tcj;
 option java_multiple_files = true;
 option java_package = "io.tcj.protos.feeds";
 
+// The feed entries we carry over the wire ARE Kv records (see
+// io.tcj.feeds.impl.DbFeedFetcherImpl#fetchPublished, which builds
+// io.tcj.protos.kv.Kv values, and the Java FeedFetchResponse<Kv> record).
+import 'io/tcj/kv.proto';
+
+// Request sent by a feed Consumer to a feed Source (the "handler" endpoint,
+// POST /_api/feeds/fetch). Mirrors the Java record
+// io.tcj.feeds.FeedEntryWebAction.FeedFetchRequest.
+message FeedFetchRequest {
+  // Logical name of the feed being consumed.
+  optional string feed_name = 1;
+
+  // Cursor: fetch entries with feed_sync_id strictly greater than this value.
+  // Carried as a string to match the Java record (it is parsed to a long via
+  // Long.parseLong in FeedEntryFetcher#fetch).
+  optional string after = 2;
+
+  // Max number of entries to return in this batch.
+  optional int32 limit = 3 [default = 50];
+
+  // Shard selector for sharded consumers: keep only rows where
+  // shard % num_shards == shard. A num_shards of -1 disables sharding
+  // (see DbFeedFetcherImpl#fetchPublished).
+  optional int32 shard = 4;
+  optional int32 num_shards = 5 [default = -1];
+}
+
+// Response returned by the feed Source for a FeedFetchRequest. Mirrors the Java
+// record io.tcj.feeds.FeedEntryWebAction.FeedFetchResponse<Kv>.
+//
+// Design note (entries encoding): the previous stub used `repeated bytes
+// entries` (each element a serialized message). We instead carry
+// `repeated Kv entries` directly: the entries genuinely are Kv records, so a
+// typed field is self-describing and avoids a manual encode/decode hop. If a
+// future feed needs to carry heterogeneous record types over a single
+// endpoint, switching back to `repeated bytes` (opaque serialized messages)
+// would be the escape hatch.
 message FeedFetchResponse {
+  // The new cursor value: max(feed_sync_id) across the returned entries,
+  // to be persisted by the Consumer and sent as `after` on the next fetch.
   optional string next_after = 1;
-  repeated bytes entries = 2;
+
+  // The published entries in this batch.
+  repeated Kv entries = 2;
+}
+
+// The "handler"/Source endpoint a feed producer exposes so remote Consumers can
+// pull published entries. Mirrors the style of KvService in kv.proto, and
+// corresponds to io.tcj.feeds.FeedEntryWebAction (POST /_api/feeds/fetch).
+service FeedSourceService {
+  rpc Fetch (FeedFetchRequest) returns (FeedFetchResponse);
+}
+
+// ---------------------------------------------------------------------------
+// Aspirational / not-yet-wired messages.
+//
+// The Publisher (FeedPublisher), cursor store (FeedCursorStore) and sequence
+// store (SequenceStore) currently persist their state in the kv table (ns
+// FEED_SEQ / FEED_CURSOR) and the publish endpoint (POST /_api/feeds/publish)
+// returns a bare "OK" string. The messages below describe those concepts as a
+// faithful contract but are NOT referenced by the Java code yet.
+// ---------------------------------------------------------------------------
+
+// A monotonically increasing sequence position for a named feed, persisted by
+// the Publisher (see io.tcj.feeds.model.Sequence).
+message FeedSequence {
+  optional string name = 1;
+  optional int64 value = 2;
+}
+
+// A Consumer's position within a (possibly sharded) feed, persisted by the
+// cursor store (see io.tcj.feeds.model.FeedCursor).
+message FeedCursor {
+  optional string name = 1;
+  optional int64 feed_sync_id = 2;
+  optional int32 shard = 3;
+  optional int32 num_shards = 4 [default = -1];
 }

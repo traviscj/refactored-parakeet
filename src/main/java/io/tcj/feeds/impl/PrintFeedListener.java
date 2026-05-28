@@ -5,7 +5,7 @@ import io.tcj.protos.kv.Kv;
 
 import java.util.List;
 
-public class PrintFeedListener implements FeedListener {
+public class PrintFeedListener implements FeedListener<Kv> {
     @Override
     public void process(List<Kv> feedEntries) {
         feedEntries.forEach(feedEntry -> {
