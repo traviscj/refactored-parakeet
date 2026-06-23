@@ -2,11 +2,11 @@ package io.tcj.feeds.impl;
 
 import com.squareup.wire.Message;
 import io.tcj.db.TraviscjDb;
-import io.tcj.feeds.FeedEntryWebAction;
 import io.tcj.feeds.api.DbFeedFetcher;
 import io.tcj.feeds.api.FeedEntry;
 import io.tcj.feeds.model.FeedCursor;
 import io.tcj.feeds.model.FeedTableDef;
+import io.tcj.feeds.model.FetchResult;
 import jakarta.inject.Singleton;
 import misk.jooq.JooqTransacter;
 import org.jooq.Condition;
@@ -77,7 +77,7 @@ public class GenericDbFeedFetcher<Rec extends UpdatableRecord<Rec>, Dto extends 
     }
 
     @Override
-    public FeedEntryWebAction.FeedFetchResponse<Dto> fetchPublished(FeedCursor feedCursor, int limit) {
+    public FetchResult<Dto> fetchPublished(FeedCursor feedCursor, int limit) {
         return jooqTransacter.transaction(jooqSession -> {
             Condition condition = def.feedSyncId().greaterThan(feedCursor.feedSyncId());
             if (def.shard() != null && feedCursor.numShards() != -1) {
@@ -93,7 +93,7 @@ public class GenericDbFeedFetcher<Rec extends UpdatableRecord<Rec>, Dto extends 
                     .max(Long::compareTo)
                     .orElse(0L);
             List<Dto> dtos = records.stream().map(def.toDto()).collect(Collectors.toList());
-            return new FeedEntryWebAction.FeedFetchResponse<>(dtos, next.toString());
+            return new FetchResult<>(dtos, next.toString());
         });
     }
 

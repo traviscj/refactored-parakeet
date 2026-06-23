@@ -1,23 +1,24 @@
 package io.tcj.feeds;
 
 import com.squareup.wire.Message;
-import io.tcj.feeds.FeedEntryWebAction.FeedFetchRequest;
-import io.tcj.feeds.FeedEntryWebAction.FeedFetchResponse;
 import io.tcj.feeds.api.FeedCursorStore;
 import io.tcj.feeds.api.FeedListener;
 import io.tcj.feeds.model.FeedConsumerDef;
 import io.tcj.feeds.model.FeedCursor;
+import io.tcj.feeds.model.FetchRequest;
+import io.tcj.feeds.model.FetchResult;
 import org.jooq.UpdatableRecord;
 
 import javax.inject.Inject;
 
 /**
- * calls a (perhaps remote) {@link FeedEntryWebAction} to retreive the next set of records.
+ * Pulls the next batch from a (perhaps remote) feed source and hands it to a local
+ * {@link FeedListener}.
  *
  * <p>We accomplish this by:
  * <ul>
  *   <li>calling out to our {@link FeedCursorStore} to obtain the current cursor.</li>
- *   <li>calling the remote feed API to get some entries.</li>
+ *   <li>calling the feed source to get some entries (see {@link FeedSourceFetchRpc}).</li>
  *   <li>passing those feed entries to our local {@link FeedListener} for processing.</li>
  *   <li>saving the new cursor back to our {@link FeedCursorStore}.</li>
  * </ul>
@@ -43,13 +44,13 @@ public class FeedConsumer<Rec extends UpdatableRecord<Rec>, Dto extends Message<
     FeedCursor feedCursor = feedCursorStore.get(feedConsumerDef.feedName(),
         feedConsumerDef.shard());
 
-    FeedFetchRequest req = new FeedFetchRequest(feedConsumerDef.feedName(),
+    FetchRequest req = new FetchRequest(feedConsumerDef.feedName(),
         Long.toString(feedCursor.feedSyncId()), feedConsumerDef.limit(), feedConsumerDef.shard(), feedConsumerDef.numShards());
 
-    FeedFetchResponse<Dto> fetchResponse = feedEntryFetcher.fetch(req);
+    FetchResult<Dto> result = feedEntryFetcher.fetch(req);
 
-    feedListener.process(fetchResponse.entries());
+    feedListener.process(result.entries());
 
-    feedCursorStore.put(feedConsumerDef.feedName(), feedConsumerDef.shard(), fetchResponse.next_after());
+    feedCursorStore.put(feedConsumerDef.feedName(), feedConsumerDef.shard(), result.nextAfter());
   }
 }

@@ -7,8 +7,11 @@
 # host `gradle run` (which never sees this file) keeps using localhost:3307 from
 # traviscj-common.yaml.
 #
-# Inside the compose network the database is the `mysql` service on its internal
-# port 3306 (the host's 3307 mapping doesn't apply container-to-container).
+# The containerized backend talks to the *host's* MySQL (the native mysqld on
+# 127.0.0.1:3306), not the throwaway compose `mysql` service. host.docker.internal
+# resolves to the host from inside the container (see extra_hosts in
+# kv3/docker-compose.yml for Linux/host-gateway support). This makes the data the
+# single source of truth that survives `docker-compose down -v`.
 data_source:
-  host: mysql
+  host: host.docker.internal
   port: 3306

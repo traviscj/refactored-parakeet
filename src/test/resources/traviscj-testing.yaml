@@ -1,0 +1,4 @@
+# Test overlay (TESTING deployment). Merges over traviscj-common.yaml; only points
+# the datasource at the throwaway codegen schema, which already has the kv table.
+data_source:
+  database: misk_jooq_test_codegen

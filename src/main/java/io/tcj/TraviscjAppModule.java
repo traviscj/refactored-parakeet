@@ -1,7 +1,7 @@
 package io.tcj;
 
 import com.google.inject.AbstractModule;
-import io.tcj.feeds.impl.KvFeedModule;
+import io.tcj.keyvalue.KvFeedModule;
 import io.tcj.keyvalue.KvListNamespaceRpc;
 import io.tcj.keyvalue.KvListRpc;
 import io.tcj.keyvalue.KvPutRpc;

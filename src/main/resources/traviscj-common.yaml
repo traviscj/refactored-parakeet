@@ -13,7 +13,7 @@ web:
 data_source:
   type: MYSQL
   host: localhost
-  port: 3307
+  port: 3306
   database: traviscj_localdev
   username: root
   password: ""

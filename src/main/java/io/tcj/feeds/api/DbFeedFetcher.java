@@ -1,8 +1,8 @@
 package io.tcj.feeds.api;
 
 import com.squareup.wire.Message;
-import io.tcj.feeds.FeedEntryWebAction;
 import io.tcj.feeds.model.FeedCursor;
+import io.tcj.feeds.model.FetchResult;
 import org.jooq.UpdatableRecord;
 
 import java.util.List;
@@ -49,5 +49,5 @@ public interface DbFeedFetcher<Rec extends UpdatableRecord<Rec>, Dto extends Mes
      * @param limit      maximum number of entries to return.
      * @return the next batch of DTOs plus the new cursor ({@code next_after}).
      */
-    FeedEntryWebAction.FeedFetchResponse<Dto> fetchPublished(FeedCursor feedCursor, int limit);
+    FetchResult<Dto> fetchPublished(FeedCursor feedCursor, int limit);
 }

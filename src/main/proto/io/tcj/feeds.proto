@@ -5,55 +5,42 @@ package io.tcj;
 option java_multiple_files = true;
 option java_package = "io.tcj.protos.feeds";
 
-// The feed entries we carry over the wire ARE Kv records (see
-// io.tcj.feeds.impl.DbFeedFetcherImpl#fetchPublished, which builds
-// io.tcj.protos.kv.Kv values, and the Java FeedFetchResponse<Kv> record).
-import 'io/tcj/kv.proto';
-
-// Request sent by a feed Consumer to a feed Source (the "handler" endpoint,
-// POST /_api/feeds/fetch). Mirrors the Java record
-// io.tcj.feeds.FeedEntryWebAction.FeedFetchRequest.
+// Request sent by a feed Consumer to a feed Source (the generic
+// /io.tcj.FeedSourceService/Fetch endpoint, which routes by feed_name).
 message FeedFetchRequest {
-  // Logical name of the feed being consumed.
+  // Logical name of the feed being consumed; selects which ExposedFeed serves it.
   optional string feed_name = 1;
 
   // Cursor: fetch entries with feed_sync_id strictly greater than this value.
-  // Carried as a string to match the Java record (it is parsed to a long via
-  // Long.parseLong in FeedEntryFetcher#fetch).
+  // Carried as a string (parsed to a long server-side).
   optional string after = 2;
 
   // Max number of entries to return in this batch.
   optional int32 limit = 3 [default = 50];
 
   // Shard selector for sharded consumers: keep only rows where
-  // shard % num_shards == shard. A num_shards of -1 disables sharding
-  // (see DbFeedFetcherImpl#fetchPublished).
+  // shard % num_shards == shard. A num_shards of -1 disables sharding.
   optional int32 shard = 4;
   optional int32 num_shards = 5 [default = -1];
 }
 
-// Response returned by the feed Source for a FeedFetchRequest. Mirrors the Java
-// record io.tcj.feeds.FeedEntryWebAction.FeedFetchResponse<Kv>.
+// Response returned by the feed Source for a FeedFetchRequest.
 //
-// Design note (entries encoding): the previous stub used `repeated bytes
-// entries` (each element a serialized message). We instead carry
-// `repeated Kv entries` directly: the entries genuinely are Kv records, so a
-// typed field is self-describing and avoids a manual encode/decode hop. If a
-// future feed needs to carry heterogeneous record types over a single
-// endpoint, switching back to `repeated bytes` (opaque serialized messages)
-// would be the escape hatch.
+// `entries` are OPAQUE serialized DTOs -- each the wire encoding of one feed
+// record's message (e.g. an io.tcj.Kv). This is what makes FeedSourceService
+// generic: a single Fetch endpoint serves every feed regardless of message type,
+// and the consumer decodes the bytes with the adapter for that feed's known type.
 message FeedFetchResponse {
   // The new cursor value: max(feed_sync_id) across the returned entries,
   // to be persisted by the Consumer and sent as `after` on the next fetch.
   optional string next_after = 1;
 
-  // The published entries in this batch.
-  repeated Kv entries = 2;
+  // The published entries in this batch, each a serialized DTO message.
+  repeated bytes entries = 2;
 }
 
-// The "handler"/Source endpoint a feed producer exposes so remote Consumers can
-// pull published entries. Mirrors the style of KvService in kv.proto, and
-// corresponds to io.tcj.feeds.FeedEntryWebAction (POST /_api/feeds/fetch).
+// The generic Source endpoint a feed producer exposes so remote Consumers can pull
+// published entries; routes by FeedFetchRequest.feed_name to the matching feed.
 service FeedSourceService {
   rpc Fetch (FeedFetchRequest) returns (FeedFetchResponse);
 }
@@ -63,8 +50,7 @@ service FeedSourceService {
 //
 // The Publisher (FeedPublisher), cursor store (FeedCursorStore) and sequence
 // store (SequenceStore) currently persist their state in the kv table (ns
-// FEED_SEQ / FEED_CURSOR) and the publish endpoint (POST /_api/feeds/publish)
-// returns a bare "OK" string. The messages below describe those concepts as a
+// FEED_SEQ / FEED_CURSOR). The messages below describe those concepts as a
 // faithful contract but are NOT referenced by the Java code yet.
 // ---------------------------------------------------------------------------
 

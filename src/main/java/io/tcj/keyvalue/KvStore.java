@@ -22,6 +22,12 @@ public class KvStore {
     @TraviscjDb
     JooqTransacter jooqTransacter;
 
+    // Explicit @Inject constructor so KvStore is constructible under strict
+    // injectors (e.g. misk's test injector requires @Inject constructors);
+    // field injection still supplies jooqTransacter.
+    @Inject
+    public KvStore() {}
+
     public void putOrUpdate(String ns, String k, String v) {
         jooqTransacter.transaction(jooqSession -> {
             KvSession kvSession = new KvSession(jooqSession);
@@ -49,9 +55,13 @@ public class KvStore {
     }
 
     public List<KvRecord> kvRecords(String ns, String kPrefix, Integer limit) {
+        return kvRecords(ns, kPrefix, limit, false);
+    }
+
+    public List<KvRecord> kvRecords(String ns, String kPrefix, Integer limit, boolean descending) {
         return jooqTransacter.transaction(
                 new JooqTransacter.TransacterOptions(),
-                jooqSession -> new KvSession(jooqSession).kvRecords(ns, kPrefix, limit));
+                jooqSession -> new KvSession(jooqSession).kvRecords(ns, kPrefix, limit, descending));
     }
 
     public List<String> ns(String nsPrefix, Integer limit) {
@@ -82,6 +92,10 @@ public class KvStore {
             jooqSession.getCtx().insertInto(KV).set(kvRecord).execute();
         }
         public List<KvRecord> kvRecords(String ns, String kPrefix, Integer limit) {
+            return kvRecords(ns, kPrefix, limit, false);
+        }
+
+        public List<KvRecord> kvRecords(String ns, String kPrefix, Integer limit, boolean descending) {
             @NotNull
             SelectConditionStep<KvRecord> kvRecords = jooqSession.getCtx().selectFrom(KV).where();
             if (!Strings.isNullOrEmpty(ns)) {
@@ -90,7 +104,10 @@ public class KvStore {
             if (!Strings.isNullOrEmpty(kPrefix)) {
                 kvRecords = kvRecords.and(KV.K.startsWith(kPrefix));
             }
-            return kvRecords.limit(limit).fetch();
+            return kvRecords
+                    .orderBy(descending ? KV.K.desc() : KV.K.asc())
+                    .limit(limit)
+                    .fetch();
         }
 
         public List<String> ns(@Nullable String nsPrefix, Integer limit) {
