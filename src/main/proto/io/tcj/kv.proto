@@ -13,10 +13,17 @@ message Kv {
   optional string v = 3;
 }
 
+enum SortOrder {
+  ASC = 0;
+  DESC = 1;
+}
+
 message ListKvReq {
   optional string ns = 1;
   optional string k_prefix = 2;
   optional int32 limit = 3 [default = 50];
+  // Order rows by key (k). Defaults to ascending.
+  optional SortOrder order = 4 [default = ASC];
 }
 
 message ListKvResp {

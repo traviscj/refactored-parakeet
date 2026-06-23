@@ -4,6 +4,7 @@ import io.tcj.protos.kv.Kv;
 import io.tcj.protos.kv.KvServiceListBlockingServer;
 import io.tcj.protos.kv.ListKvReq;
 import io.tcj.protos.kv.ListKvResp;
+import io.tcj.protos.kv.SortOrder;
 import misk.security.authz.Authenticated;
 import misk.web.actions.WebAction;
 import org.jetbrains.annotations.NotNull;
@@ -18,9 +19,10 @@ public class KvListRpc implements WebAction, KvServiceListBlockingServer {
   @Override
   @Authenticated(capabilities = {"admin_access"})
   public ListKvResp List(@NotNull ListKvReq request) {
+    boolean descending = request.order == SortOrder.DESC;
     return new ListKvResp.Builder()
         .kv(
-            kvStore.kvRecords(request.ns, request.k_prefix, request.limit).stream()
+            kvStore.kvRecords(request.ns, request.k_prefix, request.limit, descending).stream()
                 .map(r -> new Kv.Builder().ns(r.getNs()).k(r.getK()).v(new String(r.getV())).build())
                 .collect(Collectors.toList()))
         .build();
