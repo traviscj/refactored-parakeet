@@ -22,6 +22,12 @@ public class KvStore {
     @TraviscjDb
     JooqTransacter jooqTransacter;
 
+    // Explicit @Inject constructor so KvStore is constructible under strict
+    // injectors (e.g. misk's test injector requires @Inject constructors);
+    // field injection still supplies jooqTransacter.
+    @Inject
+    public KvStore() {}
+
     public void putOrUpdate(String ns, String k, String v) {
         jooqTransacter.transaction(jooqSession -> {
             KvSession kvSession = new KvSession(jooqSession);
