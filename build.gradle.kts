@@ -99,8 +99,10 @@ dependencies {
 //    jooqGenerator("org.postgresql:postgresql")
     jooqGenerator(libs.mysql)
 
+    testImplementation(platform(libs.junitBom))
     testImplementation(libs.junitApi)
     testRuntimeOnly(libs.junitEngine)
+    testRuntimeOnly(libs.junitPlatformLauncher)
     testImplementation(libs.assertj)
 
 

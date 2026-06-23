@@ -55,10 +55,16 @@ hibernate5Core = { module = "org.hibernate:hibernate-core", version = "5.6.15.Fi
 hibernateJpaApi = { module = "javax.persistence:javax.persistence-api", version = "2.2" }
 hikariCp = { module = "com.zaxxer:HikariCP", version = "4.0.3" }
 jooq = { module = "org.jooq:jooq", version = "3.19.18" }
+# BOM aligns junit-jupiter-* (5.x) with junit-platform-* (1.x) so the engine and
+# launcher can't drift (the OutputDirectoryCreator discovery failure was a missing
+# / older platform-launcher vs. a 1.11 engine).
+junitBom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 junitParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
 junitPioneer = { module = "org.junit-pioneer:junit-pioneer", version = "2.3.0" }
+# version supplied by junitBom; pins the launcher to the same platform version
+junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 
 misk = { module = "com.squareup.misk:misk", version.ref = "misk"}
 miskBom = { module = "com.squareup.misk:misk-bom", version.ref = "misk"}
