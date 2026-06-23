@@ -127,8 +127,12 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+// Build-time DB: the local MySQL on 3306 (used for schema migration + jOOQ
+// codegen). This is the same native mysqld the app reads at runtime, so no Docker
+// is needed to build, codegen, or test. Only the throwaway misk_jooq_test_codegen
+// schema is touched; real data lives in a separate schema.
 val dbConfig = mapOf(
-    "url" to "jdbc:mysql://localhost:3307/",
+    "url" to "jdbc:mysql://localhost:3306/",
     "schema" to "misk_jooq_test_codegen",
     "user" to "root",
     "password" to ""
@@ -137,7 +141,7 @@ val dbConfig = mapOf(
 miskSchemaMigrator {
     database = dbConfig["schema"]
 //    host = "localhost" // optional, defaults to localhost
-    port = 3307 // docker-compose maps host 3307 -> container 3306
+    port = 3306 // local mysqld
     username = dbConfig["user"]
     password = dbConfig["password"]
     migrationsDir = layout.projectDirectory.dir("src/main/resources/db/migration")
@@ -172,7 +176,7 @@ jooq {
             jooqConfiguration.apply {
                 jdbc.apply {
                     driver = "com.mysql.cj.jdbc.Driver"
-                    url = "jdbc:mysql://localhost:3307/misk_jooq_test_codegen"
+                    url = "jdbc:mysql://localhost:3306/misk_jooq_test_codegen"
                     user = "root"
                     password = ""
 
