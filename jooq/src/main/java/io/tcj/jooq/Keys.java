@@ -4,8 +4,12 @@
 package io.tcj.jooq;
 
 
+import io.tcj.jooq.tables.FeedCursors;
 import io.tcj.jooq.tables.Kv;
+import io.tcj.jooq.tables.Sequences;
+import io.tcj.jooq.tables.records.FeedCursorsRecord;
 import io.tcj.jooq.tables.records.KvRecord;
+import io.tcj.jooq.tables.records.SequencesRecord;
 
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -24,7 +28,11 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final UniqueKey<FeedCursorsRecord> KEY_FEED_CURSORS_PRIMARY = Internal.createUniqueKey(FeedCursors.FEED_CURSORS, DSL.name("KEY_feed_cursors_PRIMARY"), new TableField[] { FeedCursors.FEED_CURSORS.ID }, true);
+    public static final UniqueKey<FeedCursorsRecord> KEY_FEED_CURSORS_U_CONSUMER_SHARD = Internal.createUniqueKey(FeedCursors.FEED_CURSORS, DSL.name("KEY_feed_cursors_u_consumer_shard"), new TableField[] { FeedCursors.FEED_CURSORS.CONSUMER, FeedCursors.FEED_CURSORS.SHARD }, true);
     public static final UniqueKey<KvRecord> KEY_KV_PRIMARY = Internal.createUniqueKey(Kv.KV, DSL.name("KEY_kv_PRIMARY"), new TableField[] { Kv.KV.ID }, true);
     public static final UniqueKey<KvRecord> KEY_KV_U_FSI = Internal.createUniqueKey(Kv.KV, DSL.name("KEY_kv_u_fsi"), new TableField[] { Kv.KV.FEED_SYNC_ID }, true);
     public static final UniqueKey<KvRecord> KEY_KV_U_NS_K = Internal.createUniqueKey(Kv.KV, DSL.name("KEY_kv_u_ns_k"), new TableField[] { Kv.KV.NS, Kv.KV.K }, true);
+    public static final UniqueKey<SequencesRecord> KEY_SEQUENCES_PRIMARY = Internal.createUniqueKey(Sequences.SEQUENCES, DSL.name("KEY_sequences_PRIMARY"), new TableField[] { Sequences.SEQUENCES.ID }, true);
+    public static final UniqueKey<SequencesRecord> KEY_SEQUENCES_U_NAME = Internal.createUniqueKey(Sequences.SEQUENCES, DSL.name("KEY_sequences_u_name"), new TableField[] { Sequences.SEQUENCES.NAME }, true);
 }

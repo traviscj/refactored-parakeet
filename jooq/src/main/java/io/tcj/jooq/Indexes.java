@@ -23,4 +23,5 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index KV_IDX_CA = Internal.createIndex(DSL.name("idx_ca"), Kv.KV, new OrderField[] { Kv.KV.CREATED_AT }, false);
+    public static final Index KV_K_FSI_S = Internal.createIndex(DSL.name("k_fsi_s"), Kv.KV, new OrderField[] { Kv.KV.FEED_SYNC_ID, Kv.KV.SHARD }, false);
 }

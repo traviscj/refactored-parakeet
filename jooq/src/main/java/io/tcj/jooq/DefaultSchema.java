@@ -4,7 +4,9 @@
 package io.tcj.jooq;
 
 
+import io.tcj.jooq.tables.FeedCursors;
 import io.tcj.jooq.tables.Kv;
+import io.tcj.jooq.tables.Sequences;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +30,19 @@ public class DefaultSchema extends SchemaImpl {
     public static final DefaultSchema DEFAULT_SCHEMA = new DefaultSchema();
 
     /**
+     * The table <code>feed_cursors</code>.
+     */
+    public final FeedCursors FEED_CURSORS = FeedCursors.FEED_CURSORS;
+
+    /**
      * The table <code>kv</code>.
      */
     public final Kv KV = Kv.KV;
+
+    /**
+     * The table <code>sequences</code>.
+     */
+    public final Sequences SEQUENCES = Sequences.SEQUENCES;
 
     /**
      * No further instances allowed
@@ -48,7 +60,9 @@ public class DefaultSchema extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
-            Kv.KV
+            FeedCursors.FEED_CURSORS,
+            Kv.KV,
+            Sequences.SEQUENCES
         );
     }
 }

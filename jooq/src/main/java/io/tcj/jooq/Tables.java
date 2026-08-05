@@ -4,7 +4,9 @@
 package io.tcj.jooq;
 
 
+import io.tcj.jooq.tables.FeedCursors;
 import io.tcj.jooq.tables.Kv;
+import io.tcj.jooq.tables.Sequences;
 
 
 /**
@@ -14,7 +16,17 @@ import io.tcj.jooq.tables.Kv;
 public class Tables {
 
     /**
+     * The table <code>feed_cursors</code>.
+     */
+    public static final FeedCursors FEED_CURSORS = FeedCursors.FEED_CURSORS;
+
+    /**
      * The table <code>kv</code>.
      */
     public static final Kv KV = Kv.KV;
+
+    /**
+     * The table <code>sequences</code>.
+     */
+    public static final Sequences SEQUENCES = Sequences.SEQUENCES;
 }

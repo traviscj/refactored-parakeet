@@ -131,7 +131,7 @@ public class Kv extends TableImpl<KvRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.KV_IDX_CA);
+        return Arrays.asList(Indexes.KV_IDX_CA, Indexes.KV_K_FSI_S);
     }
 
     @Override
