@@ -28,7 +28,8 @@ import static io.tcj.jooq.tables.Kv.KV;
 public class KvFeedModule extends AbstractModule {
     @Override
     protected void configure() {
-        // feed-agnostic, kv-backed stores (no dedicated sequences/feed_cursors tables yet).
+        // feed-agnostic stores backed by the dedicated sequences/feed_cursors tables
+        // (shared with the feedz Python tooling).
         bind(FeedCursorStore.class).to(FeedCursorStoreImpl.class);
         bind(SequenceStore.class).to(SequenceStoreImpl.class);
 
@@ -43,8 +44,11 @@ public class KvFeedModule extends AbstractModule {
         // the single generic /io.tcj.FeedSourceService/Fetch endpoint + feed registry:
         install(new FeedSourceModule());
 
-        // publish -> expose -> consume, composed for the "kv" feed:
-        install(new FeedPublisherModule<>(KvRecord.class, Kv.class, kvTableDef, new PublishedFeedDef("kv", 5)));
+        // publish -> expose -> consume, composed for the "kv" feed. The published
+        // name "feed-kv" is the sequences-table row name and matches feedz's
+        // FEED_NAME so both publishers share one feed_sync_id allocation; the
+        // expose/consume routing name stays "kv".
+        install(new FeedPublisherModule<>(KvRecord.class, Kv.class, kvTableDef, new PublishedFeedDef("feed-kv", 5)));
         install(new ExposedFeedModule<>("kv", KvRecord.class, Kv.class, ExposedFeedModule.Exposure.WIRE_PROTO));
         install(new FeedConsumerModule<>(KvRecord.class, Kv.class,
                 new FeedConsumerDef("kv", 0, 50, -1), PrintFeedListener.class));

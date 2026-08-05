@@ -5,7 +5,8 @@ import io.tcj.feeds.model.FeedCursor;
 /**
  * Persists a consumer's position within a (possibly sharded) feed so each
  * {@code FeedConsumer.processBatch()} resumes after the last entry it handled. The
- * default implementation stores cursors in the {@code kv} table (ns {@code FEED_CURSOR}).
+ * default implementation stores cursors in the dedicated {@code feed_cursors} table
+ * (one row per (consumer, shard), shared with the feedz Python tooling).
  */
 public interface FeedCursorStore {
     /**
