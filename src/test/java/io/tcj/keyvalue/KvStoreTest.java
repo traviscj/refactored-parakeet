@@ -64,6 +64,29 @@ public class KvStoreTest {
   }
 
   @Test
+  void putOrUpdateMatchesExactKeyNotPrefix() {
+    kvStore.put("TEST_NS", "1042Pleasant", "long");
+    kvStore.putOrUpdate("TEST_NS", "1042", "short");
+
+    assertThat(kvStore.get("TEST_NS", "1042Pleasant").getV()).isEqualTo("long");
+    assertThat(kvStore.kvRecords("TEST_NS", "1042", 10)).hasSize(2);
+  }
+
+  @Test
+  void putOrUpdateRequeuesRowForFeed() {
+    kvStore.put("TEST_NS", "k", "first");
+    transacter.transaction(
+        session -> session.getCtx().update(KV).set(KV.FEED_SYNC_ID, -4242L)
+            .where(KV.NS.eq("TEST_NS").and(KV.K.eq("k"))).execute());
+
+    kvStore.putOrUpdate("TEST_NS", "k", "second");
+
+    KvRecord r = kvStore.get("TEST_NS", "k");
+    assertThat(r.getFeedSyncId()).isNull();
+    assertThat(r.getUpdatedAt()).isAfterOrEqualTo(r.getCreatedAt());
+  }
+
+  @Test
   void prefixFiltersByKey() {
     kvStore.put("TEST_NS", "alpha", "1");
     kvStore.put("TEST_NS", "alfred", "2");

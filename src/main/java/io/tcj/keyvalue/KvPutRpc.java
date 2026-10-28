@@ -15,7 +15,7 @@ public class KvPutRpc implements WebAction, KvServicePutBlockingServer {
   @Override
   @Authenticated(capabilities = {"admin_access"})
   public Kv Put(@NotNull Kv request) {
-    kvStore.put(request.ns, request.k, request.v);
+    kvStore.putOrUpdate(request.ns, request.k, request.v);
     return request;
   }
 }

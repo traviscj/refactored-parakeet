@@ -8,6 +8,7 @@ import misk.jooq.JooqTransacter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -28,14 +29,13 @@ public class KvStore {
     @Inject
     public KvStore() {}
 
+    // Exact (ns, k) match; kvRecords() treats k as a prefix, so it can't decide
+    // insert-vs-update ("1042" would match "1042Pleasant" and update nothing).
     public void putOrUpdate(String ns, String k, String v) {
         jooqTransacter.transaction(jooqSession -> {
             KvSession kvSession = new KvSession(jooqSession);
-            List<KvRecord> kvRecords = kvSession.kvRecords(ns, k, 1);
-            if (kvRecords.isEmpty()) {
+            if (kvSession.update(ns, k, v) == 0) {
                 kvSession.put(ns, k, v);
-            } else {
-                kvSession.update(ns, k, v);
             }
             return null;
         });
@@ -77,9 +77,13 @@ public class KvStore {
             this.jooqSession = jooqSession;
         }
 
-        public void update(String ns, String k, String v) {
-            jooqSession.getCtx().update(KV)
+        // Clearing feed_sync_id re-queues the row for FeedPublisher, so feed
+        // consumers see the new value. Returns rows affected (0 = no such key).
+        public int update(String ns, String k, String v) {
+            return jooqSession.getCtx().update(KV)
                     .set(KV.V, v)
+                    .set(KV.UPDATED_AT, DSL.currentLocalDateTime(3)) // DB clock, like the column default
+                    .setNull(KV.FEED_SYNC_ID)
                     .where(KV.NS.eq(ns).and(KV.K.eq(k)))
                     .execute();
         }

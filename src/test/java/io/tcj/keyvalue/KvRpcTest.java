@@ -105,6 +105,17 @@ public class KvRpcTest {
   }
 
   @Test
+  void putOverwritesExistingKey() {
+    KvPutRpc rpc = new KvPutRpc();
+    rpc.kvStore = kvStore;
+
+    rpc.Put(new Kv.Builder().ns("TEST_NS").k("pk").v("v1").build());
+    rpc.Put(new Kv.Builder().ns("TEST_NS").k("pk").v("v2").build());
+
+    assertThat(kvStore.get("TEST_NS", "pk").getV()).isEqualTo("v2");
+  }
+
+  @Test
   void listNamespaceReturnsDistinctNamespacesByPrefix() {
     kvStore.put("TEST_ALPHA", "k", "1");
     kvStore.put("TEST_ALPHA", "k2", "1");
